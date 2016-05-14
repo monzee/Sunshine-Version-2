@@ -1,15 +1,23 @@
+buildscript {
+    dependencies {
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+    }
+}
+
 apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
 
     defaultConfig {
         applicationId "com.example.android.sunshine.app"
-        minSdkVersion 10
-        targetSdkVersion 21
+        minSdkVersion 16
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+        buildConfigField "String", "OWM_API_KEY", MyOpenWeatherMapApiKey
     }
     buildTypes {
         release {
@@ -19,7 +27,14 @@ android {
     }
 }
 
+ext {
+    supportLibVersion = '23.4.0'
+    daggerVersion = '2.4'
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:21.0.2'
+    compile "com.android.support:appcompat-v7:${supportLibVersion}"
+    compile "com.google.dagger:dagger:${daggerVersion}"
+    apt "com.google.dagger:dagger-compiler:${daggerVersion}"
 }
