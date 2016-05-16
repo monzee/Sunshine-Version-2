@@ -18,21 +18,22 @@ import javax.inject.Inject;
 
 public class MainActivity extends AppCompatActivity {
     private Sunshine.ActivityInjector injector;
+    private final ShellWiring shellWiring;
     private final Queue<Fragment> fragments = new ArrayDeque<>();
 
     @Inject
     ShellContract.Navigation go;
+
+    {
+        shellWiring = new ShellWiring(getSupportFragmentManager(), R.id.container);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         injector = ((Sunshine) getApplication()).getInjector(this);
-        ShellWiring wiring = new ShellWiring(
-                getSupportFragmentManager(),
-                R.id.container
-        );
-        injector.shell(wiring).inject(this);
+        injector.shell(shellWiring).inject(this);
         if (savedInstanceState == null) {
             go.home();
         }
@@ -58,15 +59,9 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        return id == R.id.action_settings || super.onOptionsItemSelected(item);
-    }
-
     private void inject(Fragment fragment) {
         if (fragment instanceof ForecastsFragment) {
-            injector.index().inject((ForecastsFragment) fragment);
+            injector.index(shellWiring).inject((ForecastsFragment) fragment);
         }
     }
 }

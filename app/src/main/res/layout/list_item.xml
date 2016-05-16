@@ -4,5 +4,6 @@
     android:gravity="start|center_vertical"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    style="?android:textAppearanceListItem"
+    android:background="?attr/selectableItemBackground"
+    style="?attr/textAppearanceListItem"
     android:minHeight="?attr/listPreferredItemHeightLarge"/>

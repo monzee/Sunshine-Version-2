@@ -25,23 +25,38 @@ public class ForecastsAdapter extends RecyclerView.Adapter<ForecastsAdapter.Entr
             super(itemView);
             view = (TextView) itemView;
         }
+
+        public void show(IndexContract.Forecast f) {
+            view.setText(String.format("%s - %d - %d",
+                    f.getWeather(), f.getTemperature(), f.getHumidity()));
+        }
     }
 
     @Inject
     LayoutInflater inflater;
 
     @Inject @Named("forecasts")
-    List<String> items;
+    List<IndexContract.Forecast> items;
+
+    @Inject
+    IndexContract.Interaction user;
 
     @Override
     public Entry onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = inflater.inflate(R.layout.list_item, parent, false);
-        return new Entry(v);
+        final Entry e = new Entry(v);
+        v.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                user.didChooseForecast(e.getAdapterPosition());
+            }
+        });
+        return e;
     }
 
     @Override
     public void onBindViewHolder(Entry holder, int position) {
-        holder.view.setText(items.get(position));
+        holder.show(items.get(position));
     }
 
     @Override

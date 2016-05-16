@@ -33,7 +33,7 @@ public class Sunshine extends Application {
     @PerActivity
     @Subcomponent(modules = ActivityScope.class)
     public interface ActivityInjector {
-        IndexWiring.Injector index();
+        IndexWiring.Injector index(ShellWiring w);
         ShellWiring.Injector shell(ShellWiring w);
     }
 
