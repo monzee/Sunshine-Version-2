@@ -7,9 +7,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 
 import com.example.android.sunshine.app.index.IndexWiring;
+import com.example.android.sunshine.app.shell.ShellWiring;
 import com.example.android.sunshine.app.util.PerActivity;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Component;
@@ -34,7 +34,7 @@ public class Sunshine extends Application {
     @Subcomponent(modules = ActivityScope.class)
     public interface ActivityInjector {
         IndexWiring.Injector index();
-        void inject(MainActivity activity);
+        ShellWiring.Injector shell(ShellWiring w);
     }
 
     @Module
