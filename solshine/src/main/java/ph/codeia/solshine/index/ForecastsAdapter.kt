@@ -14,8 +14,8 @@ import javax.inject.Named
  * This file is a part of the Sunshine-Version-2 project.
  */
 class ForecastsAdapter @Inject constructor(
-    @param:Named("forecast") val items: MutableList<IndexContract.WeatherData>,
-    // val user: IndexContract.Interaction,
+    @Named("forecast") val items: MutableList<IndexContract.WeatherData>,
+    val user: IndexContract.Interaction,
     val inflater: LayoutInflater
 ) : RecyclerView.Adapter<ForecastsAdapter.WeatherView>() {
 
@@ -31,7 +31,7 @@ class ForecastsAdapter @Inject constructor(
         val view = inflater.inflate(R.layout.item_forecast, parent, false)
         val holder = WeatherView(view)
         view.setOnClickListener {
-            // user.didChooseItem(holder.getAdapterPosition)
+            user.didChooseItem(holder.adapterPosition)
         }
         return holder
     }

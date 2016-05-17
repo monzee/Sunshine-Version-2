@@ -15,8 +15,7 @@ import javax.inject.Named
 @Module
 class ShellWiring(val fm: FragmentManager, @IdRes val container: Int) {
 
-    @PerFeature
-    @Subcomponent(modules = arrayOf(ShellWiring::class))
+    @[PerFeature Subcomponent(modules = arrayOf(ShellWiring::class))]
     interface Injector {
         fun inject(a: MainActivity): MainActivity
     }

@@ -33,7 +33,7 @@ class Navigator @Inject constructor(
                         .add(containerId, ForecastsFragment())
                         .commit()
             }
-            Feature.DETAIL -> throw UnsupportedOperationException("unimplemented")
+            Feature.DETAIL -> {}
         }
     }
 

@@ -24,15 +24,27 @@ class Solshine : Application() {
             private set
 
         fun injector(a: Activity): ActivityInjector =
-                injector.activity(ActivityResources(a))
+                injector.activity(ActivityWiring(a))
+
+        @Module
+        class ActivityWiring(val activity: Activity) {
+            @Provides
+            fun activity(): Activity = activity
+
+            @Provides
+            fun linear(): LinearLayoutManager = LinearLayoutManager(activity)
+
+            @[Provides PerActivity]
+            fun inflater(): LayoutInflater = LayoutInflater.from(activity)
+        }
     }
 
     @[Singleton Component(modules = arrayOf(Solshine::class))]
     interface Injector {
-        fun activity(a: ActivityResources): ActivityInjector
+        fun activity(a: ActivityWiring): ActivityInjector
     }
 
-    @[PerActivity Subcomponent(modules = arrayOf(ActivityResources::class))]
+    @[PerActivity Subcomponent(modules = arrayOf(ActivityWiring::class))]
     interface ActivityInjector {
         fun shell(s: ShellWiring): ShellWiring.Injector
         fun index(i: IndexWiring): IndexWiring.Injector
@@ -45,17 +57,5 @@ class Solshine : Application() {
 
     @Provides
     fun context(): Context = this
-
-    @Module
-    class ActivityResources(val activity: Activity) {
-        @Provides
-        fun activity(): Activity = activity
-
-        @[Provides PerActivity]
-        fun linear(): LinearLayoutManager = LinearLayoutManager(activity)
-
-        @[Provides PerActivity]
-        fun inflater(): LayoutInflater = LayoutInflater.from(activity)
-    }
 }
 

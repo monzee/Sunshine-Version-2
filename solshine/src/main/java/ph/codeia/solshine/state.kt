@@ -1,6 +1,7 @@
 package ph.codeia.solshine
 
 import ph.codeia.solshine.index.IndexContract
+import ph.codeia.solshine.index.Weather
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
@@ -20,12 +21,4 @@ class IndexState @Inject constructor() {
             Weather("Jkl", "foggy", Date(), 26, 62),
             Weather("mNo", "snowy", Date(), 22, 42)
     )
-
-    private data class Weather(
-        override val location: String,
-        override val status: String,
-        override val date: Date,
-        override val temperature: Int,
-        override val humidity: Int
-    ) : IndexContract.WeatherData
 }
