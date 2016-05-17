@@ -8,6 +8,7 @@ import dagger.Provides
 import dagger.Reusable
 import dagger.Subcomponent
 import ph.codeia.solshine.IndexState
+import ph.codeia.solshine.PerFeature
 import ph.codeia.solshine.R
 import ph.codeia.solshine.shell.ShellContract
 import javax.inject.Named
@@ -17,16 +18,16 @@ import javax.inject.Named
  */
 @Module
 class IndexWiring(
-    val navigator: ShellContract.Navigation,
-    val messenger: ShellContract.Messaging
+        val navigator: ShellContract.Navigation,
+        val messenger: ShellContract.Messaging
 ) {
 
-    @Subcomponent(modules = arrayOf(IndexWiring::class))
+    @[PerFeature Subcomponent(modules = arrayOf(IndexWiring::class))]
     interface Injector {
         fun inject(f: ForecastsFragment): ForecastsFragment
     }
 
-    @[Provides Named("forecast")]
+    @[Provides Named("forecasts")]
     fun listView(a: Activity, adapter: ForecastsAdapter, lm: LinearLayoutManager): RecyclerView {
         return (a.findViewById(R.id.list_forecasts) as RecyclerView).apply {
             layoutManager = lm
@@ -34,7 +35,7 @@ class IndexWiring(
         }
     }
 
-    @[Provides Named("forecast")]
+    @[Provides Named("forecasts")]
     fun data(s: IndexState): MutableList<IndexContract.WeatherData> = s.items
 
     @[Provides Reusable]

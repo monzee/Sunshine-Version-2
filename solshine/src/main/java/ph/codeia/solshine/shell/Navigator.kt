@@ -13,9 +13,9 @@ import javax.inject.Named
  * This file is a part of the Sunshine-Version-2 project.
  */
 class Navigator @Inject constructor(
-    val activity: Activity,
-    val fragments: FragmentManager,
-    @Named("contents") @IdRes val containerId: Int
+        val activity: Activity,
+        val fragments: FragmentManager,
+        @Named("contents") @IdRes val containerId: Int
 ) : ShellContract.Navigation {
 
     override fun back() {
@@ -33,7 +33,7 @@ class Navigator @Inject constructor(
                         .add(containerId, ForecastsFragment())
                         .commit()
             }
-            Feature.DETAIL -> {}
+            Feature.DETAIL -> TODO()
         }
     }
 

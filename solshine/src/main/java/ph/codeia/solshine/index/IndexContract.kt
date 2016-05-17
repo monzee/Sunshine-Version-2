@@ -25,7 +25,7 @@ object IndexContract {
         val location: String
         val status: String
         val date: Date
-        val temperature: Int
-        val humidity: Int
+        val minTemp: Double
+        val maxTemp: Double
     }
 }

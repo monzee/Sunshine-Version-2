@@ -15,10 +15,10 @@ class IndexState @Inject constructor() {
     val isStale: AtomicBoolean = AtomicBoolean(true)
 
     var items: MutableList<IndexContract.WeatherData> = mutableListOf(
-            Weather("Abc", "sunny", Date(), 42, 82),
-            Weather("dEf", "rainy", Date(), 61, 32),
-            Weather("ghI", "cloudy", Date(), 34, 12),
-            Weather("Jkl", "foggy", Date(), 26, 62),
-            Weather("mNo", "snowy", Date(), 22, 42)
+            Weather("Abc", "sunny", Date(), 42.0, 82.0),
+            Weather("dEf", "rainy", Date(), 61.0, 32.0),
+            Weather("ghI", "cloudy", Date(), 34.0, 12.0),
+            Weather("Jkl", "foggy", Date(), 26.0, 62.0),
+            Weather("mNo", "snowy", Date(), 22.0, 42.0)
     )
 }

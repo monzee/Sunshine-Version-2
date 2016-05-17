@@ -24,12 +24,12 @@ class ForecastsFragment : Fragment() {
             inflater: LayoutInflater?,
             container: ViewGroup?,
             savedInstanceState: Bundle?): View? {
-        setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_forecasts, container, false)
     }
 
     override fun onResume() {
         super.onResume()
+        setHasOptionsMenu(true)
         presenter.bind(view)
     }
 
@@ -41,7 +41,7 @@ class ForecastsFragment : Fragment() {
         val id = item?.itemId
         when (id) {
             R.id.do_refresh -> user.didPressRefresh()
-            R.id.do_add -> presenter.gotForecast(listOf(Weather("new!", "new!!!", Date(), 10, 100)))
+            R.id.do_add -> presenter.gotForecast(listOf(Weather("new!", "new!!!", Date(), 10.0, 100.0)))
         }
         return super.onOptionsItemSelected(item)
     }
