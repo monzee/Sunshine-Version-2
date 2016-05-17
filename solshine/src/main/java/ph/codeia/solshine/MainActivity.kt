@@ -20,6 +20,9 @@ class MainActivity : AppCompatActivity() {
     @Inject
     internal lateinit var go: ShellContract.Navigation
 
+    @Inject
+    internal lateinit var msg: ShellContract.Messaging
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -44,7 +47,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun inject(f: Fragment) {
         when (f) {
-            is ForecastsFragment -> injector.index(IndexWiring(go)).inject(f)
+            is ForecastsFragment -> injector.index(IndexWiring(go, msg)).inject(f)
             else -> {}
         }
     }

@@ -4,6 +4,7 @@ import android.support.annotation.IdRes
 import android.support.v4.app.FragmentManager
 import dagger.Module
 import dagger.Provides
+import dagger.Reusable
 import dagger.Subcomponent
 import ph.codeia.solshine.MainActivity
 import ph.codeia.solshine.PerFeature
@@ -22,6 +23,9 @@ class ShellWiring(val fm: FragmentManager, @IdRes val container: Int) {
 
     @Provides
     fun nav(navigator: Navigator): ShellContract.Navigation = navigator
+
+    @[Provides Reusable]
+    fun message(msg: Messenger): ShellContract.Messaging = msg
 
     @Provides
     fun fragMan(): FragmentManager = fm

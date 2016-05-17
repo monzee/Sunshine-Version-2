@@ -16,7 +16,10 @@ import javax.inject.Named
  * This file is a part of the Sunshine-Version-2 project.
  */
 @Module
-class IndexWiring(val navigator: ShellContract.Navigation) {
+class IndexWiring(
+    val navigator: ShellContract.Navigation,
+    val messenger: ShellContract.Messaging
+) {
 
     @Subcomponent(modules = arrayOf(IndexWiring::class))
     interface Injector {
@@ -45,4 +48,7 @@ class IndexWiring(val navigator: ShellContract.Navigation) {
 
     @Provides
     fun nav(): ShellContract.Navigation = navigator
+
+    @Provides
+    fun msg(): ShellContract.Messaging = messenger
 }
