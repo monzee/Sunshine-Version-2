@@ -31,6 +31,7 @@ class ForecastsFragment : Fragment() {
         super.onResume()
         setHasOptionsMenu(true)
         presenter.bind(view)
+        presenter.getForecasts()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

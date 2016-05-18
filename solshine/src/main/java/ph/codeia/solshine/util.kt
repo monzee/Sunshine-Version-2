@@ -28,3 +28,10 @@ interface JsonDeserializable<T> {
     fun fromJson(json: String): T = fromJson(JSONObject(json))
 }
 
+inline infix fun <T> T?.rescue(block: () -> T): T? {
+    return try {
+        block()
+    } catch (_: Throwable) {
+        this
+    }
+}

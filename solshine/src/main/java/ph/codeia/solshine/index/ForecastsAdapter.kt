@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import ph.codeia.solshine.PerFeature
 import ph.codeia.solshine.R
 import javax.inject.Inject
 import javax.inject.Named
@@ -13,6 +14,7 @@ import javax.inject.Named
 /**
  * This file is a part of the Sunshine-Version-2 project.
  */
+@PerFeature
 class ForecastsAdapter @Inject constructor(
         @Named("forecasts") private val items: MutableList<IndexContract.WeatherData>,
         private val user: IndexContract.Interaction,

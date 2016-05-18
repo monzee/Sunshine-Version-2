@@ -1,6 +1,7 @@
 package ph.codeia.solshine.openweathermap
 
 import org.json.JSONObject
+import ph.codeia.solshine.rescue
 import ph.codeia.solshine.JsonDeserializable
 import java.util.*
 
@@ -34,8 +35,8 @@ data class Forecast (
         val humidity: Int,
         /** sea-level atmospheric pressure, hPa */
         val pressure: Double,
-        /** precipitation, mm? */
-        val rain: Double,
+        /** precipitation, in mm? not always present, only when raining i guess */
+        val rain: Double?,
         /** wind speed, m/s */
         val speed: Double,
         val temperature: Temperature,
@@ -46,10 +47,10 @@ data class Forecast (
             Forecast(
                     clouds = getInt("clouds"),
                     windDirection = getInt("deg"),
-                    date = Date(getLong("dt")),
+                    date = Date(getLong("dt") * 1000),
                     humidity = getInt("humidity"),
                     pressure = getDouble("pressure"),
-                    rain = getDouble("rain"),
+                    rain = null rescue { getDouble("rain") },
                     speed = getDouble("speed"),
                     temperature = Temperature.fromJson(getJSONObject("temp")),
                     weather = Weather.fromJson(getJSONArray("weather").getJSONObject(0)))

@@ -14,8 +14,8 @@ object ShellContract {
         SHORT, LONG, WHATEVER
     }
 
-    enum class Pigeon {
-        TOAST, SNACKBAR, MODAL
+    enum class Channel {
+        REGULAR, FANCY, MODAL, OUT_OF_BAND
     }
 
     interface Navigation {
@@ -26,12 +26,21 @@ object ShellContract {
     }
 
     interface Messaging {
-        fun tell(message: String, via: Pigeon = Pigeon.TOAST, duration: Duration = Duration.LONG)
+        fun tell(
+                message: String,
+                via: Channel = Channel.REGULAR,
+                duration: Duration = Duration.LONG)
+
         fun toast(message: String, duration: Duration = Duration.LONG) =
-                tell(message, Pigeon.TOAST, duration)
+                tell(message, Channel.REGULAR, duration)
+
         fun snackbar(message: String, duration: Duration = Duration.LONG) =
-                tell(message, Pigeon.SNACKBAR, duration)
+                tell(message, Channel.FANCY, duration)
+
         fun alert(message: String, duration: Duration = Duration.LONG) =
-                tell(message, Pigeon.MODAL, duration)
+                tell(message, Channel.MODAL, duration)
+
+        fun log(message: String, vararg xs: Any) =
+                tell(message.format(xs), Channel.OUT_OF_BAND, Duration.WHATEVER)
     }
 }

@@ -15,6 +15,7 @@ import javax.inject.Named
 class Navigator @Inject constructor(
         private val activity: Activity,
         private val fragments: FragmentManager,
+        private val log: ShellContract.Messaging,
         @Named("contents") @IdRes val containerId: Int
 ) : ShellContract.Navigation {
 
@@ -26,6 +27,7 @@ class Navigator @Inject constructor(
         activity.finish()
     }
 
+    @SuppressWarnings("NewApi")
     override fun launch(f: Feature, args: Bundle?) {
         when (f) {
             Feature.INDEX -> {
@@ -33,7 +35,9 @@ class Navigator @Inject constructor(
                         .add(containerId, ForecastsFragment())
                         .commit()
             }
-            Feature.DETAIL -> {}
+            Feature.DETAIL -> log.log(args?.let {
+                "${it.getString("location")} : ${it.getString("status")}"
+            } ?: "why no args?")
         }
     }
 

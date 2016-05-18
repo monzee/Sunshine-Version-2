@@ -5,12 +5,12 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import dagger.Module
 import dagger.Provides
-import dagger.Reusable
 import dagger.Subcomponent
 import ph.codeia.solshine.IndexState
 import ph.codeia.solshine.PerFeature
 import ph.codeia.solshine.R
 import ph.codeia.solshine.shell.ShellContract
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Named
 
 /**
@@ -38,12 +38,15 @@ class IndexWiring(
     @[Provides Named("forecasts")]
     fun data(s: IndexState): MutableList<IndexContract.WeatherData> = s.items
 
-    @[Provides Reusable]
+    @[Provides Named("forecasts")]
+    fun freshness(s: IndexState): AtomicBoolean = s.isStale
+
+    @Provides
     fun view(v: IndexView): IndexContract.Display = v
 
-    @[Provides Reusable]
+    @Provides
     fun actions(p: IndexPresenter): IndexContract.Interaction = p
 
-    @[Provides Reusable]
+    @Provides
     fun dataProvision(p: IndexPresenter): IndexContract.Synchronization = p
 }

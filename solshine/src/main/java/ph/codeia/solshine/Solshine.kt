@@ -14,6 +14,7 @@ import dagger.Provides
 import dagger.Subcomponent
 import ph.codeia.solshine.index.IndexWiring
 import ph.codeia.solshine.openweathermap.FileFixture
+import ph.codeia.solshine.openweathermap.Online
 import ph.codeia.solshine.openweathermap.OwmService
 import ph.codeia.solshine.shell.ShellWiring
 import java.util.concurrent.Executor
@@ -46,7 +47,10 @@ class Solshine : Application() {
         @Module
         class DataSources {
             @[Provides Named("fixture")]
-            fun owm(s: FileFixture): OwmService = s
+            fun owmFixture(s: FileFixture): OwmService = s
+
+            @Provides
+            fun owm(s: Online): OwmService = s
         }
     }
 
