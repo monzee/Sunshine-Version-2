@@ -41,7 +41,7 @@ class ForecastsFragment : Fragment() {
         val id = item?.itemId
         when (id) {
             R.id.do_refresh -> user.didPressRefresh()
-            R.id.do_add -> presenter.gotForecast(listOf(Weather("new!", "new!!!", Date(), 10.0, 100.0)))
+            R.id.do_add -> presenter.gotForecasts(listOf(Weather("new!", "new!!!", Date(), 10.0, 100.0)))
         }
         return super.onOptionsItemSelected(item)
     }

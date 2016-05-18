@@ -18,8 +18,8 @@ import javax.inject.Named
  */
 @Module
 class IndexWiring(
-        val navigator: ShellContract.Navigation,
-        val messenger: ShellContract.Messaging
+        @get:Provides internal val navigator: ShellContract.Navigation,
+        @get:Provides internal val messenger: ShellContract.Messaging
 ) {
 
     @[PerFeature Subcomponent(modules = arrayOf(IndexWiring::class))]
@@ -46,10 +46,4 @@ class IndexWiring(
 
     @[Provides Reusable]
     fun dataProvision(p: IndexPresenter): IndexContract.Synchronization = p
-
-    @Provides
-    fun nav(): ShellContract.Navigation = navigator
-
-    @Provides
-    fun msg(): ShellContract.Messaging = messenger
 }

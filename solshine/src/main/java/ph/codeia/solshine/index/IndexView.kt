@@ -12,14 +12,14 @@ import javax.inject.Named
  */
 @PerFeature
 class IndexView @Inject constructor(
-        val log: ShellContract.Messaging,
-        @Named("forecasts") val listView: RecyclerView
+        private val log: ShellContract.Messaging,
+        @Named("forecasts") private val listView: RecyclerView
 ) : IndexContract.Display {
     private val adapter = listView.adapter
-    private var lastCount = -1
+    private var lastCount = adapter.itemCount
 
     override fun refresh() {
-        lastCount = adapter.run {
+        lastCount = with(adapter) {
             val newCount = itemCount
             when {
                 newCount < lastCount -> notifyDataSetChanged()

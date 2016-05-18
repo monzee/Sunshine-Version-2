@@ -1,6 +1,8 @@
 package ph.codeia.solshine.openweathermap
 
 import android.util.Log
+import ph.codeia.solshine.Temp
+import ph.codeia.solshine.TempUnits
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
@@ -13,7 +15,12 @@ interface OwmService {
     val background: Executor?
     val foreground: Executor?
 
-    fun fetchForecastSync(apiKey: String, location: String, days: Int): String
+    fun fetchForecastsSync(
+            apiKey: String,
+            location: String,
+            days: Int,
+            @TempUnits units: String = Temp.METRIC
+    ): String
 
     fun fetchWeekForecast(apiKey: String, location: String, then: (Report?) -> Unit) {
         if (background == null || foreground == null) {
@@ -26,7 +33,7 @@ interface OwmService {
 
         background?.execute {
             Log.d("mz", "(background) fetching | $apiKey | $location")
-            result.set(Report.fromJson(fetchForecastSync(apiKey, location, 7)))
+            result.set(Report.fromJson(fetchForecastsSync(apiKey, location, 7)))
             barrier.countDown()
         }
 

@@ -35,10 +35,7 @@ class Solshine : Application() {
                 injector.activity(ActivityWiring(a))
 
         @Module
-        class ActivityWiring(val activity: Activity) {
-            @Provides
-            fun activity(): Activity = activity
-
+        class ActivityWiring(@get:Provides internal val activity: Activity) {
             @Provides
             fun linear(): LinearLayoutManager = LinearLayoutManager(activity)
 

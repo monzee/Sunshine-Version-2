@@ -28,16 +28,26 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         injector = Solshine.injector(this)
         injector.shell(ShellWiring(supportFragmentManager, R.id.container)).inject(this)
-        if (savedInstanceState == null) {
-            go.home()
-        }
+        savedInstanceState ?: go.home()
     }
 
+    /**
+     * The injection of fragments is deferred until onResumeFragments
+     * (right before Fragment.onResume is called on the fragment/s) because
+     * AppCompatActivity.onCreate is apparently called after onAttachFragment.
+     * It only seems like onCreate goes first because the first fragment attachment
+     * usually happens in onCreate. When you rotate the device, you'll get an NPE
+     * when you try injecting a fragment here.
+     */
     override fun onAttachFragment(fragment: Fragment?) {
         super.onAttachFragment(fragment)
         toInject.add(fragment)
     }
 
+    /**
+     * Make sure the individual initialization of the fragments are done in
+     * Fragment.onResume and not onCreateView or onActivityAttached.
+     */
     override fun onResumeFragments() {
         while (!toInject.isEmpty()) {
             inject(toInject.remove())

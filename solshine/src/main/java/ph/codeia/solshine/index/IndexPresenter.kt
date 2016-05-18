@@ -17,24 +17,25 @@ import javax.inject.Named
  */
 @PerFeature
 class IndexPresenter @Inject constructor(
-        @Named("forecasts") val items: MutableList<IndexContract.WeatherData>,
-        val go: ShellContract.Navigation,
-        val msg: ShellContract.Messaging,
-        @Named("fixture") val repository: OwmService
+        @Named("forecasts") private val items: MutableList<IndexContract.WeatherData>,
+        private val go: ShellContract.Navigation,
+        private val msg: ShellContract.Messaging,
+        @Named("fixture") private val repository: OwmService
 ) : IndexContract.Interaction, IndexContract.Synchronization {
     private var view: IndexContract.Display? = null
 
     override fun didPressRefresh() {
-        getForecast()
+        getForecasts()
     }
 
     @SuppressLint("NewApi") // band-aid; kotlin plugin bug in bundle methods
     override fun didChooseItem(index: Int) {
-        msg.toast("you clicked on #%d".format(index), Duration.SHORT)
+        msg.toast("you clicked on $index", Duration.SHORT)
         go.launch(Feature.DETAIL, Bundle().apply {
-            val w = items[index]
-            putString("location", w.location)
-            putString("status", w.status)
+            items[index].let {
+                putString("location", it.location)
+                putString("status", it.status)
+            }
         })
     }
 
@@ -42,18 +43,21 @@ class IndexPresenter @Inject constructor(
         this.view = view
     }
 
-    override fun getForecast() {
+    override fun getForecasts() {
         repository.fetchWeekForecast(BuildConfig.OWM_API_KEY, "manila") {
-            val city = "${it?.city}, ${it?.country}"
-            gotForecast(it?.forecast!!.map {
-                Weather(city, it.weather.category, it.date,
-                        it.temperature.min, it.temperature.max)
-            })
+            it?.apply {
+                val location = "$city, $country"
+                gotForecasts(forecasts.map {
+                    Weather(location, it.weather.category, it.date,
+                            it.temperature.min, it.temperature.max)
+                })
+            }
+            it ?: msg.tell("got nothing")
         }
     }
 
-    override fun gotForecast(newItems: List<IndexContract.WeatherData>) {
-        Log.d("mz", "got stuff: " + newItems)
+    override fun gotForecasts(newItems: List<IndexContract.WeatherData>) {
+        Log.d("mz", "got stuff: $newItems")
         items.clear()
         items.addAll(newItems)
         view?.refresh()

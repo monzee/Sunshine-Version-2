@@ -9,7 +9,7 @@ import javax.inject.Inject
 /**
  * This file is a part of the Sunshine-Version-2 project.
  */
-class Messenger @Inject constructor(val context: Activity) : ShellContract.Messaging {
+class Messenger @Inject constructor(private val context: Activity) : ShellContract.Messaging {
     override fun tell(message: String, via: Pigeon, duration: Duration) {
         // only toasts for now
         val length = when (duration) {

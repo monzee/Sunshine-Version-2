@@ -14,7 +14,10 @@ import javax.inject.Named
  * This file is a part of the Sunshine-Version-2 project.
  */
 @Module
-class ShellWiring(val fm: FragmentManager, @IdRes val container: Int) {
+class ShellWiring(
+        @get:Provides internal val fm: FragmentManager,
+        @get:[Provides Named("contents")] @IdRes internal val container: Int
+) {
 
     @[PerFeature Subcomponent(modules = arrayOf(ShellWiring::class))]
     interface Injector {
@@ -26,10 +29,4 @@ class ShellWiring(val fm: FragmentManager, @IdRes val container: Int) {
 
     @[Provides Reusable]
     fun message(msg: Messenger): ShellContract.Messaging = msg
-
-    @Provides
-    fun fragMan(): FragmentManager = fm
-
-    @Provides @Named("contents")
-    fun contentPane(): Int = container
 }
