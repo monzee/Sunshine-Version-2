@@ -23,7 +23,8 @@ class ForecastsFragment : Fragment() {
     override fun onCreateView(
             inflater: LayoutInflater?,
             container: ViewGroup?,
-            savedInstanceState: Bundle?): View? {
+            savedInstanceState: Bundle?
+    ): View? {
         return inflater?.inflate(R.layout.fragment_forecasts, container, false)
     }
 
@@ -31,7 +32,7 @@ class ForecastsFragment : Fragment() {
         super.onResume()
         setHasOptionsMenu(true)
         presenter.bind(view)
-        presenter.getForecasts()
+        presenter.fetchForecasts()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -42,7 +43,8 @@ class ForecastsFragment : Fragment() {
         val id = item?.itemId
         when (id) {
             R.id.do_refresh -> user.didPressRefresh()
-            R.id.do_add -> presenter.gotForecasts(listOf(Weather("new!", "new!!!", Date(), 10.0, 100.0)))
+            R.id.do_add ->
+                presenter.forecastsFetched(listOf(Weather("new!", "new!!!", Date(), 10.0, 100.0)))
         }
         return super.onOptionsItemSelected(item)
     }

@@ -18,7 +18,8 @@ import javax.inject.Named
 @PerFeature
 class IndexPresenter @Inject constructor(
         @Named("forecasts") private val items: MutableList<IndexContract.WeatherData>,
-        @Named("forecasts") private val stale: AtomicBoolean,
+        @Named("forecasts_stale") private val stale: AtomicBoolean,
+        @Named("forecasts_pending") private val pending: AtomicBoolean,
         private val go: ShellContract.Navigation,
         private val msg: ShellContract.Messaging,
         private val repository: OwmService
@@ -26,8 +27,10 @@ class IndexPresenter @Inject constructor(
     private var view: IndexContract.Display? = null
 
     override fun didPressRefresh() {
-        stale.set(true)
-        getForecasts()
+        if (!pending.get()) {
+            stale.set(true)
+            fetchForecasts()
+        }
     }
 
     @SuppressLint("NewApi") // band-aid; kotlin plugin bug in bundle methods
@@ -45,23 +48,23 @@ class IndexPresenter @Inject constructor(
         this.view = view
     }
 
-    override fun getForecasts() {
-        if (stale.get()) {
-            repository.fetchWeekForecast(BuildConfig.OWM_API_KEY, "94043") {
+    override fun fetchForecasts() {
+        if (stale.get() && !pending.get()) {
+            pending.set(true)
+            repository.fetchWeekForecast(BuildConfig.OWM_API_KEY, "manila") {
+                pending.set(false)
                 it?.apply {
                     val location = "$city, $country"
-                    gotForecasts(forecasts.map {
+                    forecastsFetched(forecasts.map {
                         Weather(location, it.weather.category, it.date,
                                 it.temperature.min, it.temperature.max)
                     })
-                }
-                it ?: msg.tell("got nothing")
+                } ?: msg.tell("got nothing")
             }
-
         }
     }
 
-    override fun gotForecasts(newItems: List<IndexContract.WeatherData>) {
+    override fun forecastsFetched(newItems: List<IndexContract.WeatherData>) {
         msg.log("got stuff: $newItems")
         items.clear()
         items.addAll(newItems)

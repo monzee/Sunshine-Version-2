@@ -1,9 +1,11 @@
 package ph.codeia.solshine.shell
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.IdRes
 import android.support.v4.app.FragmentManager
+import ph.codeia.solshine.DetailActivity
 import ph.codeia.solshine.index.ForecastsFragment
 import ph.codeia.solshine.shell.ShellContract.Feature
 import javax.inject.Inject
@@ -27,7 +29,6 @@ class Navigator @Inject constructor(
         activity.finish()
     }
 
-    @SuppressWarnings("NewApi")
     override fun launch(f: Feature, args: Bundle?) {
         when (f) {
             Feature.INDEX -> {
@@ -35,10 +36,12 @@ class Navigator @Inject constructor(
                         .add(containerId, ForecastsFragment())
                         .commit()
             }
-            Feature.DETAIL -> log.log(args?.let {
-                "${it.getString("location")} : ${it.getString("status")}"
-            } ?: "why no args?")
+            Feature.DETAIL -> with(activity) {
+                startActivity(Intent(this, DetailActivity::class.java).apply {
+                    putExtras(args)
+                })
+            }
+            Feature.SETTINGS -> {}
         }
     }
-
 }

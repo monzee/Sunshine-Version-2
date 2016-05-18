@@ -11,7 +11,7 @@ import javax.inject.Named
 /**
  * This file is a part of the Sunshine-Version-2 project.
  */
-class FileFixture @Inject constructor(
+class OwmFixture @Inject constructor(
         private val resources: Resources,
         @Named("worker") override val background: Executor,
         @Named("ui") override val foreground: Executor

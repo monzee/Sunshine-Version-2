@@ -33,14 +33,21 @@ interface OwmService {
 
         background?.execute {
             Log.d("mz", "(background) fetching | $apiKey | $location")
-            result.set(Report.fromJson(fetchForecastsSync(apiKey, location, 7)))
+            fetchForecastsSync(apiKey, location, 7).let {
+                if (it.isNotEmpty()) {
+                    result.set(Report.fromJson(it))
+                }
+            }
             barrier.countDown()
         }
 
         Thread {
-            barrier.await(30, TimeUnit.SECONDS)
-            foreground?.execute {
-                then(result.get())
+            if (barrier.await(30, TimeUnit.SECONDS)) {
+                foreground?.execute {
+                    then(result.get())
+                }
+            } else {
+                Log.d("mz", "fetch timeout")
             }
         }.start()
     }

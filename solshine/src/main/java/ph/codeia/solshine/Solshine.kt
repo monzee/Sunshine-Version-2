@@ -13,8 +13,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.Subcomponent
 import ph.codeia.solshine.index.IndexWiring
-import ph.codeia.solshine.openweathermap.FileFixture
-import ph.codeia.solshine.openweathermap.Online
+import ph.codeia.solshine.openweathermap.OwmFixture
+import ph.codeia.solshine.openweathermap.OwmHttp
 import ph.codeia.solshine.openweathermap.OwmService
 import ph.codeia.solshine.shell.ShellWiring
 import java.util.concurrent.Executor
@@ -47,10 +47,10 @@ class Solshine : Application() {
         @Module
         class DataSources {
             @[Provides Named("fixture")]
-            fun owmFixture(s: FileFixture): OwmService = s
+            fun owmFixture(s: OwmFixture): OwmService = s
 
             @Provides
-            fun owm(s: Online): OwmService = s
+            fun owm(s: OwmHttp): OwmService = s
         }
     }
 
@@ -78,9 +78,15 @@ class Solshine : Application() {
 
     @[Provides Singleton Named("ui")]
     fun uiExecutor(): Executor {
-        val handler = Handler(Looper.getMainLooper())
+        val mainLooper = Looper.getMainLooper()
+        val uiThread = mainLooper.thread
+        val handler = Handler(mainLooper)
         return Executor {
-            handler.post(it)
+            if (uiThread == Thread.currentThread()) {
+                it.run()
+            } else {
+                handler.post(it)
+            }
         }
     }
 

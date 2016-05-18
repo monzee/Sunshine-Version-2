@@ -1,8 +1,8 @@
 package ph.codeia.solshine.openweathermap
 
 import org.json.JSONObject
-import ph.codeia.solshine.rescue
 import ph.codeia.solshine.JsonDeserializable
+import ph.codeia.solshine.rescue
 import java.util.*
 
 data class Report (

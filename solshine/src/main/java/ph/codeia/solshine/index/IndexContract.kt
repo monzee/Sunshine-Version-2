@@ -17,8 +17,8 @@ object IndexContract {
 
     interface Synchronization {
         fun bind(view: Display?)
-        fun getForecasts()
-        fun gotForecasts(newItems: List<WeatherData>)
+        fun fetchForecasts()
+        fun forecastsFetched(newItems: List<WeatherData>)
     }
 
     interface WeatherData {

@@ -7,7 +7,7 @@ import android.os.Bundle
  */
 object ShellContract {
     enum class Feature {
-        INDEX, DETAIL
+        INDEX, DETAIL, SETTINGS
     }
 
     enum class Duration {

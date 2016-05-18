@@ -21,9 +21,10 @@ class IndexView @Inject constructor(
     override fun refresh() {
         lastCount = with(adapter) {
             val newCount = itemCount
-            when {
-                newCount < lastCount -> notifyDataSetChanged()
-                else -> notifyItemRangeChanged(0, newCount)
+            if (newCount < lastCount) {
+                notifyDataSetChanged()
+            } else {
+                notifyItemRangeChanged(0, newCount)
             }
             newCount
         }

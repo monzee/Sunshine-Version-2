@@ -12,7 +12,7 @@ import javax.inject.Named
 /**
  * This file is a part of the Sunshine-Version-2 project.
  */
-class Online @Inject constructor(
+class OwmHttp @Inject constructor(
         @Named("worker") override val background: Executor?,
         @Named("ui") override val foreground: Executor?
 ) : OwmService {
