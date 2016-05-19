@@ -31,25 +31,26 @@ interface OwmService {
         val barrier = CountDownLatch(1)
         val result = AtomicReference<Report>()
 
-        background?.execute {
-            Log.d("mz", "(background) fetching | $apiKey | $location")
-            fetchForecastsSync(apiKey, location, 7).let {
-                if (it.isNotEmpty()) {
-                    result.set(Report.fromJson(it))
+        background?.let {
+            it.execute {
+                Log.d("mz", "(background) fetching | $apiKey | $location")
+                fetchForecastsSync(apiKey, location, 7).let {
+                    if (it.isNotEmpty()) {
+                        result.set(Report.fromJson(it))
+                    }
                 }
+                barrier.countDown()
             }
-            barrier.countDown()
-        }
 
-        Thread {
-            if (barrier.await(30, TimeUnit.SECONDS)) {
+            it.execute {
+                if (!barrier.await(30, TimeUnit.SECONDS)) {
+                    Log.d("mz", "fetch timeout")
+                }
                 foreground?.execute {
                     then(result.get())
                 }
-            } else {
-                Log.d("mz", "fetch timeout")
             }
-        }.start()
+        }
     }
 }
 

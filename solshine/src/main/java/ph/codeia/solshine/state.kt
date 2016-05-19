@@ -14,9 +14,9 @@ import javax.inject.Singleton
 class IndexState @Inject constructor() {
     val isStale: AtomicBoolean = AtomicBoolean(true)
 
-    val pending: AtomicBoolean = AtomicBoolean(false)
+    val isPending: AtomicBoolean = AtomicBoolean(false)
 
-    var items: MutableList<IndexContract.WeatherData> = mutableListOf(
+    val items: MutableList<IndexContract.WeatherData> = mutableListOf(
             Weather("Abc", "sunny", Date(), 42.0, 82.0),
             Weather("dEf", "rainy", Date(), 61.0, 32.0),
             Weather("ghI", "cloudy", Date(), 34.0, 12.0),

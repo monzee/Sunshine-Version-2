@@ -5,9 +5,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.IdRes
 import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentTransaction
+import android.support.v7.app.ActionBar
 import ph.codeia.solshine.DetailActivity
+import ph.codeia.solshine.SettingsFragment
 import ph.codeia.solshine.index.ForecastsFragment
-import ph.codeia.solshine.shell.ShellContract.Feature
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -17,31 +20,66 @@ import javax.inject.Named
 class Navigator @Inject constructor(
         private val activity: Activity,
         private val fragments: FragmentManager,
-        private val log: ShellContract.Messaging,
-        @Named("contents") @IdRes val containerId: Int
+        private val actionBar: ActionBar?,
+        private val log: ShellContract.Feedback,
+        @Named("contents") @IdRes private val containerId: Int
 ) : ShellContract.Navigation {
 
+    private final val titles: Deque<String> = ArrayDeque()
+    private var nextTitle: String? = null
+    private var backStackSize = fragments.backStackEntryCount
+
+    init {
+        actionBar?.let {
+            fragments.addOnBackStackChangedListener {
+                val newSize = fragments.backStackEntryCount
+                if (backStackSize > newSize) {
+                    it.title = titles.pop()
+                } else it.title.toString().let { t ->
+                    titles.push(t)
+                    it.title = nextTitle ?: t
+                }
+                backStackSize = newSize
+            }
+        }
+    }
+
     override fun back() {
-        fragments.popBackStack()
+        // i need to rethink this
     }
 
-    override fun quit() {
-        activity.finish()
-    }
-
-    override fun launch(f: Feature, args: Bundle?) {
-        when (f) {
-            Feature.INDEX -> {
+    override fun launch(f: Long, args: Bundle?): Boolean = when (f) {
+        ShellContract.INDEX -> when (containerId) {
+            0 -> false
+            else -> true.apply {
+                // if this is the first run, do this
                 fragments.beginTransaction()
-                        .add(containerId, ForecastsFragment())
+                        .add(containerId, ForecastsFragment(), "home")
+                        .commit()
+                // otherwise pop the backstack until you see this fragment
+            }
+        }
+
+        ShellContract.DETAIL -> with(activity) {
+            startActivity(Intent(this, DetailActivity::class.java).apply {
+                putExtras(args)
+            })
+            true
+        }
+
+        ShellContract.SETTINGS -> when (containerId) {
+            0 -> false // launch index, send SETTINGS as arg
+            else -> true.apply {
+                nextTitle = "Settings"
+                fragments.beginTransaction()
+                        .hide(fragments.findFragmentById(containerId))
+                        .add(containerId, SettingsFragment(), "settings")
+                        .addToBackStack("settings")
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                         .commit()
             }
-            Feature.DETAIL -> with(activity) {
-                startActivity(Intent(this, DetailActivity::class.java).apply {
-                    putExtras(args)
-                })
-            }
-            Feature.SETTINGS -> {}
         }
+
+        else -> false
     }
 }

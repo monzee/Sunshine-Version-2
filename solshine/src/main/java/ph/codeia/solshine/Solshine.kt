@@ -3,9 +3,14 @@ package ph.codeia.solshine
 import android.app.Activity
 import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.res.Resources
 import android.os.Handler
 import android.os.Looper
+import android.support.v4.app.FragmentManager
+import android.support.v7.app.ActionBar
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import dagger.Component
@@ -32,16 +37,25 @@ class Solshine : Application() {
         lateinit var injector: Injector
             private set
 
-        fun injector(a: Activity): ActivityInjector =
+        fun injector(a: AppCompatActivity): ActivityInjector =
                 injector.activity(ActivityWiring(a))
 
         @Module
-        class ActivityWiring(@get:Provides internal val activity: Activity) {
+        class ActivityWiring(private val activity: AppCompatActivity) {
+            @Provides
+            fun context(): Activity = activity
+
             @Provides
             fun linear(): LinearLayoutManager = LinearLayoutManager(activity)
 
             @[Provides PerActivity]
             fun inflater(): LayoutInflater = LayoutInflater.from(activity)
+
+            @Provides
+            fun fragMan(): FragmentManager = activity.supportFragmentManager
+
+            @Provides
+            fun actionBar(): ActionBar? = activity.supportActionBar
         }
 
         @Module
@@ -61,12 +75,14 @@ class Solshine : Application() {
 
     @[PerActivity Subcomponent(modules = arrayOf(ActivityWiring::class))]
     interface ActivityInjector {
+        fun inject(f: SettingsFragment)
         fun shell(s: ShellWiring): ShellWiring.Injector
         fun index(i: IndexWiring): IndexWiring.Injector
     }
 
     override fun onCreate() {
         super.onCreate()
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
         injector = DaggerSolshine_Injector.builder().solshine(this).build()
     }
 
@@ -74,7 +90,7 @@ class Solshine : Application() {
     fun context(): Context = this
 
     @[Provides Singleton Named("worker")]
-    fun workerExecutor(): Executor = Executors.newSingleThreadExecutor()
+    fun workerExecutor(): Executor = Executors.newCachedThreadPool()
 
     @[Provides Singleton Named("ui")]
     fun uiExecutor(): Executor {
@@ -92,4 +108,7 @@ class Solshine : Application() {
 
     @[Provides Singleton]
     fun res(): Resources = resources
+
+    @Provides
+    fun prefs(): SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 }

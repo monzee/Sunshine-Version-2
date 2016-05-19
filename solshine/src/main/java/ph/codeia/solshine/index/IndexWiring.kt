@@ -3,6 +3,7 @@ package ph.codeia.solshine.index
 import android.app.Activity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import dagger.Module
 import dagger.Provides
 import dagger.Subcomponent
@@ -11,6 +12,7 @@ import ph.codeia.solshine.PerFeature
 import ph.codeia.solshine.R
 import ph.codeia.solshine.shell.ShellContract
 import java.util.concurrent.atomic.AtomicBoolean
+import javax.inject.Inject
 import javax.inject.Named
 
 /**
@@ -19,7 +21,7 @@ import javax.inject.Named
 @Module
 class IndexWiring(
         @get:Provides internal val navigator: ShellContract.Navigation,
-        @get:Provides internal val messenger: ShellContract.Messaging
+        @get:Provides internal val messenger: ShellContract.Feedback
 ) {
 
     @[PerFeature Subcomponent(modules = arrayOf(IndexWiring::class))]
@@ -27,12 +29,16 @@ class IndexWiring(
         fun inject(f: ForecastsFragment): ForecastsFragment
     }
 
-    @[Provides Named("forecasts")]
-    fun listView(a: Activity, adapter: ForecastsAdapter, lm: LinearLayoutManager): RecyclerView {
-        return (a.findViewById(R.id.list_forecasts) as RecyclerView).apply {
-            layoutManager = lm
-            this.adapter = adapter
-        }
+    @PerFeature
+    class Shared @Inject constructor(internal val presenter: IndexPresenter)
+
+    @Provides
+    fun listView(
+            a: Activity, fa: ForecastsAdapter, lm: LinearLayoutManager
+    ): RecyclerView = (a.findViewById(R.id.list_forecasts) as RecyclerView).apply {
+        layoutManager = lm
+        adapter = fa
+        Log.d("mz", "recyclerview bound to adapter and lm")
     }
 
     @[Provides Named("forecasts")]
@@ -42,14 +48,14 @@ class IndexWiring(
     fun freshness(s: IndexState): AtomicBoolean = s.isStale
 
     @[Provides Named("forecasts_pending")]
-    fun pending(s: IndexState): AtomicBoolean = s.pending
+    fun pending(s: IndexState): AtomicBoolean = s.isPending
 
     @Provides
     fun view(v: IndexView): IndexContract.Display = v
 
     @Provides
-    fun actions(p: IndexPresenter): IndexContract.Interaction = p
+    fun actions(s: Shared): IndexContract.Interaction = s.presenter
 
     @Provides
-    fun dataProvision(p: IndexPresenter): IndexContract.Synchronization = p
+    fun dataSync(s: Shared): IndexContract.Synchronization = s.presenter
 }

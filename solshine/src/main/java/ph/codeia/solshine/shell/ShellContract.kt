@@ -1,6 +1,7 @@
 package ph.codeia.solshine.shell
 
 import android.os.Bundle
+import android.support.annotation.IntDef
 
 /**
  * This file is a part of the Sunshine-Version-2 project.
@@ -9,6 +10,14 @@ object ShellContract {
     enum class Feature {
         INDEX, DETAIL, SETTINGS
     }
+    const val INDEX = 0L
+    const val DETAIL = 1L
+    const val SETTINGS = 2L
+
+    @[
+    IntDef(INDEX, DETAIL, SETTINGS)  // why long??
+    Retention(AnnotationRetention.SOURCE)
+    ] annotation class Screen
 
     enum class Duration {
         SHORT, LONG, WHATEVER
@@ -19,13 +28,12 @@ object ShellContract {
     }
 
     interface Navigation {
-        fun launch(f: Feature, args: Bundle? = null)
+        fun launch(@Screen f: Long, args: Bundle? = null): Boolean
         fun back()
-        fun home() = launch(Feature.INDEX)
-        fun quit()
+        fun home() = launch(INDEX)
     }
 
-    interface Messaging {
+    interface Feedback {
         fun tell(
                 message: String,
                 via: Channel = Channel.REGULAR,

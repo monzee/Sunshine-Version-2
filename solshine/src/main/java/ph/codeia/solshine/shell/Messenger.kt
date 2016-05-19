@@ -10,7 +10,7 @@ import javax.inject.Inject
 /**
  * This file is a part of the Sunshine-Version-2 project.
  */
-class Messenger @Inject constructor(private val context: Activity) : ShellContract.Messaging {
+class Messenger @Inject constructor(private val context: Activity) : ShellContract.Feedback {
     override fun tell(message: String, via: Channel, duration: Duration) {
         when (via) {
             Channel.OUT_OF_BAND -> Log.i("mz/Messenger", message)

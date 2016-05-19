@@ -15,13 +15,12 @@ import javax.inject.Named
 /**
  * This file is a part of the Sunshine-Version-2 project.
  */
-@PerFeature
 class IndexPresenter @Inject constructor(
         @Named("forecasts") private val items: MutableList<IndexContract.WeatherData>,
         @Named("forecasts_stale") private val stale: AtomicBoolean,
         @Named("forecasts_pending") private val pending: AtomicBoolean,
         private val go: ShellContract.Navigation,
-        private val msg: ShellContract.Messaging,
+        private val msg: ShellContract.Feedback,
         private val repository: OwmService
 ) : IndexContract.Interaction, IndexContract.Synchronization {
     private var view: IndexContract.Display? = null
@@ -36,7 +35,7 @@ class IndexPresenter @Inject constructor(
     @SuppressLint("NewApi") // band-aid; kotlin plugin bug in bundle methods
     override fun didChooseItem(index: Int) {
         msg.toast("you clicked on $index", Duration.SHORT)
-        go.launch(Feature.DETAIL, Bundle().apply {
+        go.launch(ShellContract.DETAIL, Bundle().apply {
             items[index].let {
                 putString("location", it.location)
                 putString("status", it.status)

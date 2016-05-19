@@ -2,8 +2,10 @@ package ph.codeia.solshine.index
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.*
 import ph.codeia.solshine.R
+import ph.codeia.solshine.shell.ShellContract
 import java.util.*
 import javax.inject.Inject
 
@@ -18,20 +20,21 @@ class ForecastsFragment : Fragment() {
     internal lateinit var user: IndexContract.Interaction
 
     @Inject
-    internal lateinit var view: IndexContract.Display
+    internal lateinit var view: dagger.Lazy<IndexContract.Display>
+
+    @Inject
+    internal lateinit var msg: ShellContract.Feedback
 
     override fun onCreateView(
             inflater: LayoutInflater?,
             container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View? {
-        return inflater?.inflate(R.layout.fragment_forecasts, container, false)
-    }
+    ): View? = inflater?.inflate(R.layout.fragment_forecasts, container, false)
 
     override fun onResume() {
         super.onResume()
         setHasOptionsMenu(true)
-        presenter.bind(view)
+        presenter.bind(view.get())
         presenter.fetchForecasts()
     }
 
@@ -39,14 +42,12 @@ class ForecastsFragment : Fragment() {
         inflater?.inflate(R.menu.index, menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        val id = item?.itemId
-        when (id) {
-            R.id.do_refresh -> user.didPressRefresh()
-            R.id.do_add ->
-                presenter.forecastsFetched(listOf(Weather("new!", "new!!!", Date(), 10.0, 100.0)))
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean = when (item?.itemId) {
+        R.id.do_refresh -> true.apply { user.didPressRefresh() }
+        R.id.do_add -> true.apply {
+            presenter.forecastsFetched(listOf(Weather("new!", "new!!!", Date(), 10.0, 100.0)))
         }
-        return super.onOptionsItemSelected(item)
+        else -> super.onOptionsItemSelected(item)
     }
 
     override fun onDestroyView() {

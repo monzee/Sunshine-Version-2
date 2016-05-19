@@ -3,6 +3,8 @@ package ph.codeia.solshine
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuItem
 import ph.codeia.solshine.index.ForecastsFragment
 import ph.codeia.solshine.index.IndexWiring
 import ph.codeia.solshine.shell.ShellContract
@@ -16,19 +18,32 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
     private lateinit var injector: Solshine.ActivityInjector
     private val toInject: Queue<Fragment> = ArrayDeque()
+    private var canInjectNow: Boolean = false
 
     @Inject
     internal lateinit var go: ShellContract.Navigation
 
     @Inject
-    internal lateinit var msg: ShellContract.Messaging
+    internal lateinit var msg: ShellContract.Feedback
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         injector = Solshine.injector(this)
-        injector.shell(ShellWiring(supportFragmentManager, R.id.container)).inject(this)
-        savedInstanceState ?: go.home()
+        injector.shell(ShellWiring(R.id.container)).inject(this)
+        canInjectNow = true
+        savedInstanceState ?: go.home()  // should be parameterized
+        supportActionBar?.setHomeButtonEnabled(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean = when (item?.itemId) {
+        R.id.do_launch_settings -> go.launch(ShellContract.SETTINGS)
+        else -> super.onOptionsItemSelected(item)
     }
 
     /**
@@ -41,12 +56,18 @@ class MainActivity : AppCompatActivity() {
      */
     override fun onAttachFragment(fragment: Fragment?) {
         super.onAttachFragment(fragment)
-        toInject.add(fragment)
+        fragment?.let {
+            if (canInjectNow) {
+                inject(it)
+            } else {
+                toInject.add(it)
+            }
+        }
     }
 
     /**
      * Make sure the individual initialization of the fragments are done in
-     * Fragment.onResume and not onCreateView or onActivityAttached.
+     * Fragment.onResume and not onCreateView or onActivityCreated.
      */
     override fun onResumeFragments() {
         while (!toInject.isEmpty()) {
@@ -58,6 +79,7 @@ class MainActivity : AppCompatActivity() {
     private fun inject(f: Fragment) {
         when (f) {
             is ForecastsFragment -> injector.index(IndexWiring(go, msg)).inject(f)
+            is SettingsFragment -> injector.inject(f)
             else -> {}
         }
     }

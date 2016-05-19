@@ -10,10 +10,9 @@ import javax.inject.Named
 /**
  * This file is a part of the Sunshine-Version-2 project.
  */
-@PerFeature
 class IndexView @Inject constructor(
-        private val log: ShellContract.Messaging,
-        @Named("forecasts") private val listView: RecyclerView
+        private val log: ShellContract.Feedback,
+        private val listView: RecyclerView
 ) : IndexContract.Display {
     private val adapter = listView.adapter
     private var lastCount = adapter.itemCount
