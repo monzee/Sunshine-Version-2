@@ -2,9 +2,9 @@ package ph.codeia.solshine.index
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.*
 import ph.codeia.solshine.R
+import ph.codeia.solshine.SuperclassInjector
 import ph.codeia.solshine.shell.ShellContract
 import java.util.*
 import javax.inject.Inject
@@ -20,7 +20,7 @@ class ForecastsFragment : Fragment() {
     internal lateinit var user: IndexContract.Interaction
 
     @Inject
-    internal lateinit var view: dagger.Lazy<IndexContract.Display>
+    internal lateinit var view: IndexContract.Display
 
     @Inject
     internal lateinit var msg: ShellContract.Feedback
@@ -33,8 +33,9 @@ class ForecastsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        (activity as? SuperclassInjector<Fragment>)?.inject(this)
         setHasOptionsMenu(true)
-        presenter.bind(view.get())
+        presenter.bind(view)
         presenter.fetchForecasts()
     }
 

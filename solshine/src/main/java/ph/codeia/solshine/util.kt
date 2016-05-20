@@ -28,6 +28,10 @@ interface JsonDeserializable<T> {
     fun fromJson(json: String): T = fromJson(JSONObject(json))
 }
 
+interface SuperclassInjector<T> {
+    fun inject(obj: T): Boolean
+}
+
 inline infix fun <T> T?.rescue(block: () -> T): T? {
     return try {
         block()

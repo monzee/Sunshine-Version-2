@@ -1,7 +1,6 @@
 package ph.codeia.solshine.shell
 
 import android.support.annotation.IdRes
-import android.support.v4.app.FragmentManager
 import dagger.Module
 import dagger.Provides
 import dagger.Reusable

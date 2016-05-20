@@ -8,9 +8,9 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.ActionBar
 import ph.codeia.solshine.DetailActivity
+import ph.codeia.solshine.FragmentStackState
 import ph.codeia.solshine.SettingsFragment
 import ph.codeia.solshine.index.ForecastsFragment
-import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -22,22 +22,25 @@ class Navigator @Inject constructor(
         private val fragments: FragmentManager,
         private val actionBar: ActionBar?,
         private val log: ShellContract.Feedback,
+        private val stack: FragmentStackState,
         @Named("contents") @IdRes private val containerId: Int
 ) : ShellContract.Navigation {
 
-    private final val titles: Deque<String> = ArrayDeque()
-    private var nextTitle: String? = null
     private var backStackSize = fragments.backStackEntryCount
 
     init {
         actionBar?.let {
+            it.title = stack.nextTitle ?: activity.title
             fragments.addOnBackStackChangedListener {
                 val newSize = fragments.backStackEntryCount
                 if (backStackSize > newSize) {
-                    it.title = titles.pop()
-                } else it.title.toString().let { t ->
-                    titles.push(t)
-                    it.title = nextTitle ?: t
+                    stack.titles.pop().let { t ->
+                        it.title = t
+                        stack.nextTitle = t
+                    }
+                } else {
+                    stack.titles.push(it.title.toString())
+                    it.title = stack.nextTitle
                 }
                 backStackSize = newSize
             }
@@ -61,6 +64,7 @@ class Navigator @Inject constructor(
         }
 
         ShellContract.DETAIL -> with(activity) {
+            actionBar?.title = title
             startActivity(Intent(this, DetailActivity::class.java).apply {
                 putExtras(args)
             })
@@ -70,10 +74,9 @@ class Navigator @Inject constructor(
         ShellContract.SETTINGS -> when (containerId) {
             0 -> false // launch index, send SETTINGS as arg
             else -> true.apply {
-                nextTitle = "Settings"
+                stack.nextTitle = "Settings"
                 fragments.beginTransaction()
-                        .hide(fragments.findFragmentById(containerId))
-                        .add(containerId, SettingsFragment(), "settings")
+                        .replace(containerId, SettingsFragment(), "settings")
                         .addToBackStack("settings")
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                         .commit()

@@ -6,7 +6,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import ph.codeia.solshine.shell.ShellContract
-import ph.codeia.solshine.shell.ShellContract.Feature
 import ph.codeia.solshine.shell.ShellWiring
 import javax.inject.Inject
 
@@ -14,12 +13,19 @@ class DetailActivity : AppCompatActivity() {
     @Inject
     internal lateinit var go: ShellContract.Navigation
 
+    @Inject
+    internal lateinit var log: ShellContract.Feedback
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
         Solshine.injector(this).shell(ShellWiring(0)).inject(this)
         (findViewById(R.id.some_label) as TextView).apply {
             text = intent.getStringExtra("location")
+        }
+        supportActionBar?.let {
+            log.here("${it.title} : $title")
+            it.title = title
         }
     }
 

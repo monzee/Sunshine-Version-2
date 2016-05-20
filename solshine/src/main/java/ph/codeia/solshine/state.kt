@@ -24,3 +24,9 @@ class IndexState @Inject constructor() {
             Weather("mNo", "snowy", Date(), 22.0, 42.0)
     )
 }
+
+@Singleton
+class FragmentStackState @Inject constructor() {
+    var nextTitle: String? = null
+    val titles: Deque<String> = ArrayDeque()
+}

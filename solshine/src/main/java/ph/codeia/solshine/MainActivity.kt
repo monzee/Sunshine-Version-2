@@ -9,16 +9,13 @@ import ph.codeia.solshine.index.ForecastsFragment
 import ph.codeia.solshine.index.IndexWiring
 import ph.codeia.solshine.shell.ShellContract
 import ph.codeia.solshine.shell.ShellWiring
-import java.util.*
 import javax.inject.Inject
 
 /**
  * This file is a part of the Sunshine-Version-2 project.
  */
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), SuperclassInjector<Fragment> {
     private lateinit var injector: Solshine.ActivityInjector
-    private val toInject: Queue<Fragment> = ArrayDeque()
-    private var canInjectNow: Boolean = false
 
     @Inject
     internal lateinit var go: ShellContract.Navigation
@@ -31,9 +28,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         injector = Solshine.injector(this)
         injector.shell(ShellWiring(R.id.container)).inject(this)
-        canInjectNow = true
         savedInstanceState ?: go.home()  // should be parameterized
-        supportActionBar?.setHomeButtonEnabled(true)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -41,46 +36,22 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    override fun onResumeFragments() {
+        super.onResumeFragments()
+    }
+
     override fun onOptionsItemSelected(item: MenuItem?): Boolean = when (item?.itemId) {
         R.id.do_launch_settings -> go.launch(ShellContract.SETTINGS)
         else -> super.onOptionsItemSelected(item)
     }
 
-    /**
-     * The injection of fragments is deferred until onResumeFragments
-     * (right before Fragment.onResume is called on the fragment/s) because
-     * AppCompatActivity.onCreate is apparently called after onAttachFragment.
-     * It only seems like onCreate goes first because the first fragment attachment
-     * usually happens in onCreate. When you rotate the device, you'll get an NPE
-     * when you try injecting a fragment here.
-     */
-    override fun onAttachFragment(fragment: Fragment?) {
-        super.onAttachFragment(fragment)
-        fragment?.let {
-            if (canInjectNow) {
-                inject(it)
-            } else {
-                toInject.add(it)
-            }
+    override fun inject(obj: Fragment): Boolean = when (obj) {
+        is ForecastsFragment -> true.apply {
+            injector.index(IndexWiring(go, msg)).inject(obj)
         }
-    }
-
-    /**
-     * Make sure the individual initialization of the fragments are done in
-     * Fragment.onResume and not onCreateView or onActivityCreated.
-     */
-    override fun onResumeFragments() {
-        while (!toInject.isEmpty()) {
-            inject(toInject.remove())
+        is SettingsFragment -> true.apply {
+            injector.inject(obj)
         }
-        super.onResumeFragments()
-    }
-
-    private fun inject(f: Fragment) {
-        when (f) {
-            is ForecastsFragment -> injector.index(IndexWiring(go, msg)).inject(f)
-            is SettingsFragment -> injector.inject(f)
-            else -> {}
-        }
+        else -> false
     }
 }

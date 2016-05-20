@@ -3,6 +3,7 @@ package ph.codeia.solshine
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.support.v7.preference.PreferenceFragmentCompat
 import android.view.Menu
 import android.view.MenuInflater
@@ -21,6 +22,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
 
     override fun onResume() {
         super.onResume()
+        (activity as? SuperclassInjector<Fragment>)?.inject(this)
         setHasOptionsMenu(true)
         preferences.registerOnSharedPreferenceChangeListener(this)
         listOf("location", "units").forEach { onSharedPreferenceChanged(preferences, it) }

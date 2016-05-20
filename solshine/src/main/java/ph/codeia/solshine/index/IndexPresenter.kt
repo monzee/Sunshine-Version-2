@@ -3,11 +3,9 @@ package ph.codeia.solshine.index
 import android.annotation.SuppressLint
 import android.os.Bundle
 import ph.codeia.solshine.BuildConfig
-import ph.codeia.solshine.PerFeature
 import ph.codeia.solshine.openweathermap.OwmService
 import ph.codeia.solshine.shell.ShellContract
 import ph.codeia.solshine.shell.ShellContract.Duration
-import ph.codeia.solshine.shell.ShellContract.Feature
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import javax.inject.Named

@@ -7,9 +7,6 @@ import android.support.annotation.IntDef
  * This file is a part of the Sunshine-Version-2 project.
  */
 object ShellContract {
-    enum class Feature {
-        INDEX, DETAIL, SETTINGS
-    }
     const val INDEX = 0L
     const val DETAIL = 1L
     const val SETTINGS = 2L
@@ -49,6 +46,9 @@ object ShellContract {
                 tell(message, Channel.MODAL, duration)
 
         fun log(message: String, vararg xs: Any) =
-                tell(message.format(xs), Channel.OUT_OF_BAND, Duration.WHATEVER)
+                tell(message.format(*xs), Channel.OUT_OF_BAND, Duration.WHATEVER)
+
+        fun here(message: String = "I'M HERE!") =
+                log("-----=====[ $message ]=====-----")
     }
 }
