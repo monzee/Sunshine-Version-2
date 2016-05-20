@@ -16,6 +16,9 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
     @Inject
     internal lateinit var preferences: SharedPreferences
 
+    @Inject
+    internal lateinit var index: IndexState
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.preferences)
     }
@@ -26,7 +29,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
         (activity as? Injector<Fragment>)?.inject(this)
         setHasOptionsMenu(true)
         preferences.registerOnSharedPreferenceChangeListener(this)
-        listOf("location", "units").forEach { onSharedPreferenceChanged(preferences, it) }
+        listOf("location", "units").forEach { showValue(it) }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -34,8 +37,13 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
     }
 
     override fun onSharedPreferenceChanged(prefs: SharedPreferences?, key: String?) {
+        showValue(key)
+        index.isStale.set(true)
+    }
+
+    private fun showValue(key: String?) {
         findPreference(key).let {
-            it.summary = prefs?.getString(key, when (key) {
+            it.summary = preferences.getString(key, when (key) {
                 "location" -> "Manila"
                 "units" -> "metric"
                 else -> ""

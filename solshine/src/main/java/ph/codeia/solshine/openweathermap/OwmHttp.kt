@@ -23,7 +23,13 @@ class OwmHttp @Inject constructor(
             days: Int,
             @TempUnits units: String
     ): String {
-        val query = "mode=json&cnt=$days&units=$units&q=$location&appid=$apiKey"
+        val query = "mode=json&cnt=$days&q=$location&appid=$apiKey".let {
+            when (units) {
+                "standard" -> it
+                else -> "$it&units=$units"
+            }
+        }
+        Log.d("mz", query)
         val url = URL("http://api.openweathermap.org/data/2.5/forecast/daily?$query")
         return (url.openConnection() as HttpURLConnection).run {
             Log.i("mz", "(online) fetching via http...")

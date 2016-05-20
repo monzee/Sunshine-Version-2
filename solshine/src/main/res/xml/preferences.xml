@@ -6,8 +6,10 @@
         android:key="location"
         android:title="@string/location"
         android:defaultValue="Manila"
-        android:selectAllOnFocus="true"
         android:singleLine="true"
+        android:selectAllOnFocus="true"
+        android:textIsSelectable="true"
+        android:imeOptions="actionDone"
         />
 
     <ListPreference
@@ -15,8 +17,8 @@
         android:entries="@array/units"
         android:entryValues="@array/units"
         android:defaultValue="metric"
-        android:title="Units"
-        android:dialogTitle="Units"
+        android:title="@string/units"
+        android:dialogTitle="@string/units"
         />
 
 </PreferenceScreen>

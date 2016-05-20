@@ -3,7 +3,6 @@ package ph.codeia.solshine.index
 import android.app.Activity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import dagger.Module
 import dagger.Provides
 import dagger.Subcomponent
@@ -38,7 +37,6 @@ class IndexWiring(
     ): RecyclerView = (a.findViewById(R.id.list_forecasts) as RecyclerView).apply {
         layoutManager = lm
         adapter = fa
-        Log.d("mz", "recyclerview bound to adapter and lm")
     }
 
     @[Provides Named("forecasts")]

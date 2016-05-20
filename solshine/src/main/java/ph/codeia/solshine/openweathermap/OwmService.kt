@@ -22,7 +22,12 @@ interface OwmService {
             @TempUnits units: String = Temp.METRIC
     ): String
 
-    fun fetchWeekForecast(apiKey: String, location: String, then: (Report?) -> Unit) {
+    fun fetchWeekForecast(
+            apiKey: String,
+            location: String,
+            @TempUnits units: String = Temp.METRIC,
+            then: (Report?) -> Unit
+    ) {
         if (background == null || foreground == null) {
             then(null)
             return
@@ -34,7 +39,7 @@ interface OwmService {
         background?.let {
             it.execute {
                 Log.d("mz", "(background) fetching | $apiKey | $location")
-                fetchForecastsSync(apiKey, location, 7).let {
+                fetchForecastsSync(apiKey, location, 7, units).let {
                     if (it.isNotEmpty()) {
                         result.set(Report.fromJson(it))
                     }

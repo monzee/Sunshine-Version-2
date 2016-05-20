@@ -1,5 +1,6 @@
 package ph.codeia.solshine.index
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import ph.codeia.solshine.BuildConfig
 import ph.codeia.solshine.openweathermap.OwmService
@@ -18,7 +19,8 @@ class IndexPresenter @Inject constructor(
         @Named("forecasts_pending") private val pending: AtomicBoolean,
         private val go: ShellContract.Navigation,
         private val msg: ShellContract.Feedback,
-        private val repository: OwmService
+        private val repository: OwmService,
+        private val prefs: SharedPreferences
 ) : IndexContract.Interaction, IndexContract.Synchronization {
     private var view: IndexContract.Display? = null
 
@@ -47,7 +49,11 @@ class IndexPresenter @Inject constructor(
     override fun fetchForecasts() {
         if (stale.get() && !pending.get()) {
             pending.set(true)
-            repository.fetchWeekForecast(BuildConfig.OWM_API_KEY, "manila") {
+            repository.fetchWeekForecast(
+                    BuildConfig.OWM_API_KEY,
+                    prefs.getString("location", "Manila"),
+                    prefs.getString("units", "metric")
+            ) {
                 pending.set(false)
                 it?.apply {
                     val location = "$city, $country"
