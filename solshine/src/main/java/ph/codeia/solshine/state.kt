@@ -30,3 +30,8 @@ class FragmentStackState @Inject constructor() {
     var nextTitle: String? = null
     val titles: Deque<String> = ArrayDeque()
 }
+
+@Singleton
+class MapQueryState @Inject constructor() {
+    var coords: Pair<Double, Double>? = null
+}

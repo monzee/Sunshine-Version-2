@@ -7,8 +7,8 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/do_add"
-        android:title="add"
+        android:id="@+id/do_view_map"
+        android:title="Map view"
         app:showAsAction="never"/>
 
 </menu>

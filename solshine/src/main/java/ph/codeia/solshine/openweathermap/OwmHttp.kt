@@ -23,7 +23,8 @@ class OwmHttp @Inject constructor(
             days: Int,
             @TempUnits units: String
     ): String {
-        val query = "mode=json&cnt=$days&q=$location&appid=$apiKey".let {
+        val q = location.replace("\\s+".toRegex(), "")
+        val query = "mode=json&cnt=$days&q=$q&appid=$apiKey".let {
             when (units) {
                 "standard" -> it
                 else -> "$it&units=$units"

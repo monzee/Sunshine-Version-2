@@ -8,16 +8,21 @@ import java.util.*
 data class Report (
         val city: String,
         val country: String,
+        val coords: Pair<Double, Double>,
         val forecasts: List<Forecast>
 ) {
     companion object : JsonDeserializable<Report> {
         override fun fromJson(json: JSONObject): Report {
             val city = json.getJSONObject("city")
             val list = json.getJSONArray("list")
+            val coord = city.getJSONObject("coord")
+            val lat = coord.getDouble("lat")
+            val lon = coord.getDouble("lon")
 
             return Report(
                     city = city.getString("name"),
                     country = city.getString("country"),
+                    coords = Pair(lat, lon),
                     forecasts = (0..list.length() - 1).map {
                         Forecast.fromJson(list.getJSONObject(it))
                     })

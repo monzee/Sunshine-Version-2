@@ -10,9 +10,10 @@ object ShellContract {
     const val INDEX = 0L
     const val DETAIL = 1L
     const val SETTINGS = 2L
+    const val MAP = 3L
 
     @[
-    IntDef(INDEX, DETAIL, SETTINGS)  // why long??
+    IntDef(INDEX, DETAIL, SETTINGS, MAP)  // why long??
     Retention(AnnotationRetention.SOURCE)
     ] annotation class Screen
 

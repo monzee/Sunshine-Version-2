@@ -3,6 +3,7 @@ package ph.codeia.solshine.index
 import android.content.SharedPreferences
 import android.os.Bundle
 import ph.codeia.solshine.BuildConfig
+import ph.codeia.solshine.MapQueryState
 import ph.codeia.solshine.openweathermap.OwmService
 import ph.codeia.solshine.shell.ShellContract
 import ph.codeia.solshine.shell.ShellContract.Duration
@@ -17,6 +18,7 @@ class IndexPresenter @Inject constructor(
         @Named("forecasts") private val items: MutableList<IndexContract.WeatherData>,
         @Named("forecasts_stale") private val stale: AtomicBoolean,
         @Named("forecasts_pending") private val pending: AtomicBoolean,
+        private val mapQuery: MapQueryState,
         private val go: ShellContract.Navigation,
         private val msg: ShellContract.Feedback,
         private val repository: OwmService,
@@ -57,6 +59,7 @@ class IndexPresenter @Inject constructor(
                 pending.set(false)
                 it?.apply {
                     val location = "$city, $country"
+                    mapQuery.coords = coords
                     forecastsFetched(forecasts.map {
                         Weather(location, it.weather.category, it.date,
                                 it.temperature.min, it.temperature.max)
