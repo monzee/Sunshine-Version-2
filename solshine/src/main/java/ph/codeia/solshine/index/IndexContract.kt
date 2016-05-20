@@ -13,6 +13,7 @@ object IndexContract {
     interface Interaction {
         fun didPressRefresh()
         fun didChooseItem(index: Int)
+        fun didPressViewMap()
     }
 
     interface Synchronization {

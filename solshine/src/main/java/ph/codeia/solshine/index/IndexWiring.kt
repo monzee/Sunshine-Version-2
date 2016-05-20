@@ -42,12 +42,6 @@ class IndexWiring(
     @[Provides Named("forecasts")]
     fun data(s: IndexState): MutableList<IndexContract.WeatherData> = s.items
 
-    @[Provides Named("forecasts_stale")]
-    fun freshness(s: IndexState): AtomicBoolean = s.isStale
-
-    @[Provides Named("forecasts_pending")]
-    fun pending(s: IndexState): AtomicBoolean = s.isPending
-
     @Provides
     fun view(v: IndexView): IndexContract.Display = v
 

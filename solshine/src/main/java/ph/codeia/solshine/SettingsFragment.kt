@@ -38,7 +38,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
 
     override fun onSharedPreferenceChanged(prefs: SharedPreferences?, key: String?) {
         showValue(key)
-        index.isStale.set(true)
+        index.isStale = true
     }
 
     private fun showValue(key: String?) {

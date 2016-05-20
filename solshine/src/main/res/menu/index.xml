@@ -8,7 +8,7 @@
 
     <item
         android:id="@+id/do_view_map"
-        android:title="Map view"
+        android:title="@string/view_map"
         app:showAsAction="never"/>
 
 </menu>
