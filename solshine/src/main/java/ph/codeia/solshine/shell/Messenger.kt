@@ -3,8 +3,8 @@ package ph.codeia.solshine.shell
 import android.app.Activity
 import android.util.Log
 import android.widget.Toast
-import ph.codeia.solshine.shell.ShellContract.Duration
 import ph.codeia.solshine.shell.ShellContract.Channel
+import ph.codeia.solshine.shell.ShellContract.Duration
 import javax.inject.Inject
 
 /**

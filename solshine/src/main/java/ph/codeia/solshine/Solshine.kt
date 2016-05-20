@@ -33,6 +33,18 @@ import javax.inject.Singleton
 @Module
 class Solshine : Application() {
 
+    @[Singleton Component(modules = arrayOf(Solshine::class, DataSources::class))]
+    interface Injector {
+        fun activity(a: ActivityWiring): ActivityInjector
+    }
+
+    @[PerActivity Subcomponent(modules = arrayOf(ActivityWiring::class))]
+    interface ActivityInjector {
+        fun inject(f: SettingsFragment)
+        fun shell(s: ShellWiring): ShellWiring.Injector
+        fun index(i: IndexWiring): IndexWiring.Injector
+    }
+
     companion object {
         lateinit var injector: Injector
             private set
@@ -66,18 +78,6 @@ class Solshine : Application() {
             @Provides
             fun owm(s: OwmHttp): OwmService = s
         }
-    }
-
-    @[Singleton Component(modules = arrayOf(Solshine::class, DataSources::class))]
-    interface Injector {
-        fun activity(a: ActivityWiring): ActivityInjector
-    }
-
-    @[PerActivity Subcomponent(modules = arrayOf(ActivityWiring::class))]
-    interface ActivityInjector {
-        fun inject(f: SettingsFragment)
-        fun shell(s: ShellWiring): ShellWiring.Injector
-        fun index(i: IndexWiring): IndexWiring.Injector
     }
 
     override fun onCreate() {

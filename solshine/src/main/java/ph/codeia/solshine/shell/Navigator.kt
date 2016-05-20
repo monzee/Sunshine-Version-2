@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.ActionBar
 import ph.codeia.solshine.DetailActivity
 import ph.codeia.solshine.FragmentStackState
+import ph.codeia.solshine.R
 import ph.codeia.solshine.SettingsFragment
 import ph.codeia.solshine.index.ForecastsFragment
 import javax.inject.Inject
@@ -74,7 +75,7 @@ class Navigator @Inject constructor(
         ShellContract.SETTINGS -> when (containerId) {
             0 -> false // launch index, send SETTINGS as arg
             else -> true.apply {
-                stack.nextTitle = "Settings"
+                stack.nextTitle = activity.getString(R.string.settings)
                 fragments.beginTransaction()
                         .replace(containerId, SettingsFragment(), "settings")
                         .addToBackStack("settings")

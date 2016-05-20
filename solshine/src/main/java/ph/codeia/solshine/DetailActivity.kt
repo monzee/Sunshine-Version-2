@@ -23,10 +23,7 @@ class DetailActivity : AppCompatActivity() {
         (findViewById(R.id.some_label) as TextView).apply {
             text = intent.getStringExtra("location")
         }
-        supportActionBar?.let {
-            log.here("${it.title} : $title")
-            it.title = title
-        }
+        supportActionBar?.title = title
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

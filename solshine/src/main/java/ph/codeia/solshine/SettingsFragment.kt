@@ -22,7 +22,8 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
 
     override fun onResume() {
         super.onResume()
-        (activity as? SuperclassInjector<Fragment>)?.inject(this)
+        @Suppress("UNCHECKED_CAST")
+        (activity as? Injector<Fragment>)?.inject(this)
         setHasOptionsMenu(true)
         preferences.registerOnSharedPreferenceChangeListener(this)
         listOf("location", "units").forEach { onSharedPreferenceChanged(preferences, it) }

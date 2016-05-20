@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import ph.codeia.solshine.PerFeature
 import ph.codeia.solshine.R
 import javax.inject.Inject
 import javax.inject.Named

@@ -14,7 +14,7 @@ import javax.inject.Inject
 /**
  * This file is a part of the Sunshine-Version-2 project.
  */
-class MainActivity : AppCompatActivity(), SuperclassInjector<Fragment> {
+class MainActivity : AppCompatActivity(), Injector<Fragment> {
     private lateinit var injector: Solshine.ActivityInjector
 
     @Inject
@@ -45,12 +45,12 @@ class MainActivity : AppCompatActivity(), SuperclassInjector<Fragment> {
         else -> super.onOptionsItemSelected(item)
     }
 
-    override fun inject(obj: Fragment): Boolean = when (obj) {
+    override fun inject(injectable: Fragment): Boolean = when (injectable) {
         is ForecastsFragment -> true.apply {
-            injector.index(IndexWiring(go, msg)).inject(obj)
+            injector.index(IndexWiring(go, msg)).inject(injectable)
         }
         is SettingsFragment -> true.apply {
-            injector.inject(obj)
+            injector.inject(injectable)
         }
         else -> false
     }

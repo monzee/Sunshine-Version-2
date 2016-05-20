@@ -1,6 +1,5 @@
 package ph.codeia.solshine.index
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import ph.codeia.solshine.BuildConfig
 import ph.codeia.solshine.openweathermap.OwmService
@@ -30,10 +29,10 @@ class IndexPresenter @Inject constructor(
         }
     }
 
-    @SuppressLint("NewApi") // band-aid; kotlin plugin bug in bundle methods
     override fun didChooseItem(index: Int) {
         msg.toast("you clicked on $index", Duration.SHORT)
         go.launch(ShellContract.DETAIL, Bundle().apply {
+            @Suppress("NEW_API")  // surely a bug, these are available since API 1.
             items[index].let {
                 putString("location", it.location)
                 putString("status", it.status)

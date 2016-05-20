@@ -3,8 +3,8 @@ package ph.codeia.solshine.index
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.*
+import ph.codeia.solshine.Injector
 import ph.codeia.solshine.R
-import ph.codeia.solshine.SuperclassInjector
 import ph.codeia.solshine.shell.ShellContract
 import java.util.*
 import javax.inject.Inject
@@ -33,7 +33,8 @@ class ForecastsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        (activity as? SuperclassInjector<Fragment>)?.inject(this)
+        @Suppress("UNCHECKED_CAST")
+        (activity as? Injector<Fragment>)?.inject(this)
         setHasOptionsMenu(true)
         presenter.bind(view)
         presenter.fetchForecasts()
