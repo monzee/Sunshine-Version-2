@@ -4,5 +4,6 @@
     <string name="settings">Settings</string>
     <string name="location">Location</string>
     <string name="units">Units</string>
+    <string name="share">Share</string>
     <string name="view_map">View map</string>
 </resources>

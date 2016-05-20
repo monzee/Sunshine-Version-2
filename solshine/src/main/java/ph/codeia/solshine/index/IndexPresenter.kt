@@ -7,7 +7,9 @@ import ph.codeia.solshine.IndexState
 import ph.codeia.solshine.openweathermap.OwmService
 import ph.codeia.solshine.shell.ShellContract
 import ph.codeia.solshine.shell.ShellContract.Duration
+import java.text.DateFormat
 import javax.inject.Inject
+import javax.inject.Named
 
 /**
  * This file is a part of the Sunshine-Version-2 project.
@@ -17,7 +19,8 @@ class IndexPresenter @Inject constructor(
         private val go: ShellContract.Navigation,
         private val msg: ShellContract.Feedback,
         private val repository: OwmService,
-        private val prefs: SharedPreferences
+        private val prefs: SharedPreferences,
+        @Named("medium") private val dateFormat: DateFormat
 ) : IndexContract.Interaction, IndexContract.Synchronization {
 
     private var view: IndexContract.Display? = null
@@ -34,8 +37,11 @@ class IndexPresenter @Inject constructor(
         go.launch(ShellContract.DETAIL, Bundle().apply {
             @Suppress("NEW_API")  // surely a bug, these are available since API 1.
             state.items[index].let {
+                putString("date", dateFormat.format(it.date))
                 putString("location", it.location)
                 putString("status", it.status)
+                putDouble("min", it.minTemp)
+                putDouble("max", it.maxTemp)
             }
         })
     }

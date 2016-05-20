@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
+import android.text.format.DateFormat as AndroidDateFormat
 import android.view.LayoutInflater
 import dagger.Component
 import dagger.Module
@@ -22,6 +23,7 @@ import ph.codeia.solshine.openweathermap.OwmFixture
 import ph.codeia.solshine.openweathermap.OwmHttp
 import ph.codeia.solshine.openweathermap.OwmService
 import ph.codeia.solshine.shell.ShellWiring
+import java.text.DateFormat
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import javax.inject.Named
@@ -111,4 +113,7 @@ class Solshine : Application() {
 
     @Provides
     fun prefs(): SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+
+    @[Provides Named("medium")]
+    fun dateFormatMedium(): DateFormat = AndroidDateFormat.getMediumDateFormat(this)
 }
