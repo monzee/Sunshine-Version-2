@@ -27,7 +27,7 @@ class IndexPresenter @Inject constructor(
     private var view: IndexContract.Display? = null
 
     override fun didPressRefresh() {
-        if (!state.isStale) {
+        if (!state.isPending) {
             state.isStale = true
             fetchForecasts()
         }

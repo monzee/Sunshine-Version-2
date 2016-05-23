@@ -39,8 +39,8 @@ inline fun <T> barf(default: T?, block: () -> T): T? = try {
 }
 
 sealed class Result<T> {
-    class Ok<T>(val value: T) : Result<T>()
-    class Err<T>(val error: Throwable) : Result<T>()
+    class Ok<T> internal constructor(val value: T) : Result<T>()
+    class Err<T> internal constructor(val error: Throwable) : Result<T>()
 
     companion object Try {
         fun <T> ok(result: T): Ok<T> = Ok(result)
