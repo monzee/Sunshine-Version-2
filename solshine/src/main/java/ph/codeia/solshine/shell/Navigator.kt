@@ -28,18 +28,21 @@ class Navigator @Inject constructor(
         @Named("contents") @IdRes private val containerId: Int
 ) : ShellContract.Navigation {
 
+    override var title = stack.nextTitle ?: activity.title
+        set(value) {
+            stack.nextTitle = value.toString()
+            actionBar?.title = value
+        }
+
     private var backStackSize = fragments.backStackEntryCount
 
     init {
         actionBar?.let {
-            it.title = stack.nextTitle ?: activity.title
+            it.title = title
             fragments.addOnBackStackChangedListener {
                 val newSize = fragments.backStackEntryCount
                 if (backStackSize > newSize) {
-                    stack.titles.pop().let { t ->
-                        it.title = t
-                        stack.nextTitle = t
-                    }
+                    title = stack.titles.pop()
                 } else {
                     stack.titles.push(it.title.toString())
                     it.title = stack.nextTitle

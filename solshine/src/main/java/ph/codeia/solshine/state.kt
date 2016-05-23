@@ -12,9 +12,10 @@ import javax.inject.Singleton
 class IndexState @Inject constructor() {
     var isStale: Boolean = true
     var isPending: Boolean = false
-    var coords: Pair<Double, Double>? = null
+    var location: IndexContract.Location? = null
     val items: MutableList<IndexContract.WeatherData> = mutableListOf()
 }
+
 
 @Singleton
 class FragmentStackState @Inject constructor() {

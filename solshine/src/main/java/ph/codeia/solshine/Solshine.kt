@@ -23,6 +23,8 @@ import ph.codeia.solshine.openweathermap.OwmHttp
 import ph.codeia.solshine.openweathermap.OwmService
 import ph.codeia.solshine.shell.ShellWiring
 import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import javax.inject.Named
@@ -112,8 +114,11 @@ class Solshine : Application() {
     fun res(): Resources = resources
 
     @Provides
+    fun locale(): Locale = resources.configuration.locale
+
+    @[Provides Singleton]
     fun prefs(): SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
-    @[Provides Named("medium")]
-    fun dateFormatMedium(): DateFormat = AndroidDateFormat.getMediumDateFormat(this)
+    @Provides
+    fun dateFormat(locale: Locale): DateFormat = SimpleDateFormat("EEE, d MMM yyyy", locale)
 }

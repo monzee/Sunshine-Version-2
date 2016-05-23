@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import ph.codeia.solshine.R
+import java.text.DateFormat
 import javax.inject.Inject
 
 /**
@@ -15,7 +16,8 @@ import javax.inject.Inject
 class ForecastsAdapter @Inject constructor(
         private val items: MutableList<IndexContract.WeatherData>,
         private val user: IndexContract.Interaction,
-        private val inflater: LayoutInflater
+        private val inflater: LayoutInflater,
+        private val dateFormat: DateFormat
 ) : RecyclerView.Adapter<ForecastsAdapter.WeatherView>() {
 
     class WeatherView(view: View) : RecyclerView.ViewHolder(view) {
@@ -35,10 +37,9 @@ class ForecastsAdapter @Inject constructor(
         return holder
     }
 
-    override fun onBindViewHolder(holder: WeatherView?, position: Int) {
-        with(items[position]) {
-            holder?.text = "$location &mdash; $status &mdash; %.2f/%.2f".format(minTemp, maxTemp)
-        }
+    override fun onBindViewHolder(holder: WeatherView?, position: Int) = with(items[position]) {
+        val d = dateFormat.format(date)
+        holder?.text = "$d &mdash; $status &mdash; %.2f/%.2f".format(minTemp, maxTemp)
     }
 
     override fun getItemCount(): Int = items.size

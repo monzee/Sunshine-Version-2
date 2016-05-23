@@ -26,6 +26,7 @@ object ShellContract {
     }
 
     interface Navigation {
+        var title: CharSequence
         fun launch(@Screen f: Long, args: Bundle? = null): Boolean
         fun back()
         fun home() = launch(INDEX)

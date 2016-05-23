@@ -19,14 +19,19 @@ object IndexContract {
     interface Synchronization {
         fun bind(view: Display?)
         fun fetchForecasts()
-        fun forecastsFetched(newItems: List<WeatherData>)
+        fun forecastsFetched(newItems: List<WeatherData>, location: Location)
     }
 
     interface WeatherData {
-        val location: String
         val status: String
         val date: Date
         val minTemp: Double
         val maxTemp: Double
+    }
+
+    interface Location {
+        val city: String
+        val country: String
+        val coords: Pair<Double, Double>
     }
 }
