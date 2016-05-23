@@ -14,12 +14,12 @@ import javax.inject.Scope
 
 @[
 Retention(AnnotationRetention.SOURCE)
-StringDef(Temp.METRIC, Temp.KELVIN, Temp.IMPERIAL)
+StringDef(Units.METRIC, Units.KELVIN, Units.IMPERIAL)
 ] annotation class TempUnits
 
-object Temp {
+object Units {
     const val METRIC = "metric"
-    const val KELVIN = "kelvin"
+    const val KELVIN = "standard"
     const val IMPERIAL = "imperial"
 }
 
@@ -32,10 +32,20 @@ interface Injector<T> {
     fun inject(injectable: T): Boolean
 }
 
-inline infix fun <T> T?.rescue(block: () -> T): T? {
-    return try {
-        block()
-    } catch (_: Throwable) {
-        this
+inline fun <T> barf(default: T?, block: () -> T): T? = try {
+    block()
+} catch (_: Throwable) {
+    default
+}
+
+sealed class Result<T> {
+    class Ok<T>(val value: T) : Result<T>()
+    class Err<T>(val error: Throwable) : Result<T>()
+
+    companion object Try {
+        fun <T> ok(result: T): Ok<T> = Ok(result)
+        fun <T> fail(error: Throwable): Err<T> = Err(error)
+        fun <T> fail(message: String): Err<T> = Err(RuntimeException(message))
+        inline operator fun <T> invoke(block: Try.() -> Result<T>): Result<T> = this.block()
     }
 }

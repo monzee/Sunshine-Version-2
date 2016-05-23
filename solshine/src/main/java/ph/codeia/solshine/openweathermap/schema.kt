@@ -2,7 +2,7 @@ package ph.codeia.solshine.openweathermap
 
 import org.json.JSONObject
 import ph.codeia.solshine.JsonDeserializable
-import ph.codeia.solshine.rescue
+import ph.codeia.solshine.barf
 import java.util.*
 
 data class Report (
@@ -55,7 +55,7 @@ data class Forecast (
                     date = Date(getLong("dt") * 1000),
                     humidity = getInt("humidity"),
                     pressure = getDouble("pressure"),
-                    rain = null rescue { getDouble("rain") },
+                    rain = barf(null) { getDouble("rain") },
                     speed = getDouble("speed"),
                     temperature = Temperature.fromJson(getJSONObject("temp")),
                     weather = Weather.fromJson(getJSONArray("weather").getJSONObject(0)))

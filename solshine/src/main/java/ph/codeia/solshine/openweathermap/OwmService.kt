@@ -1,7 +1,9 @@
 package ph.codeia.solshine.openweathermap
 
 import android.util.Log
-import ph.codeia.solshine.Temp
+import org.json.JSONException
+import ph.codeia.solshine.Result
+import ph.codeia.solshine.Units
 import ph.codeia.solshine.TempUnits
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executor
@@ -19,40 +21,45 @@ interface OwmService {
             apiKey: String,
             location: String,
             days: Int,
-            @TempUnits units: String = Temp.METRIC
+            @TempUnits units: String = Units.METRIC
     ): String
 
-    fun fetchWeekForecast(
+    fun fetchForecasts(
             apiKey: String,
             location: String,
-            @TempUnits units: String = Temp.METRIC,
-            then: (Report?) -> Unit
+            days: Int = 7,
+            @TempUnits units: String = Units.METRIC,
+            then: Result<Report>.() -> Unit
     ) {
-        if (background == null || foreground == null) {
-            then(null)
-            return
-        }
-
         val barrier = CountDownLatch(1)
-        val result = AtomicReference<Report>()
-
+        val result = AtomicReference<Result<Report>>().apply {
+            when {
+                background == null -> set(Result.fail("need background executor"))
+                foreground == null -> set(Result.fail("need foreground executor"))
+            }
+        }
         background?.let {
             it.execute {
-                Log.d("mz", "(background) fetching | $apiKey | $location")
-                fetchForecastsSync(apiKey, location, 7, units).let {
-                    if (it.isNotEmpty()) {
-                        result.set(Report.fromJson(it))
+                val json = fetchForecastsSync(apiKey, location, 7, units)
+                result.set(when {
+                    json.isNotEmpty() -> try {
+                        Result.ok(Report.fromJson(json))
+                    } catch (e: JSONException) {
+                        Log.d("mz", json)
+                        // TODO: should try to parse the json and get the error message
+                        Result.fail<Report>(e)
                     }
-                }
+                    else -> Result.fail("got a blank response. network error?")
+                })
                 barrier.countDown()
             }
 
             it.execute {
                 if (!barrier.await(30, TimeUnit.SECONDS)) {
-                    Log.d("mz", "fetch timeout")
+                    result.set(Result.fail("timeout"))
                 }
                 foreground?.execute {
-                    then(result.get())
+                    result.get().then()
                 }
             }
         }

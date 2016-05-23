@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import ph.codeia.solshine.BuildConfig
 import ph.codeia.solshine.IndexState
+import ph.codeia.solshine.Result
 import ph.codeia.solshine.openweathermap.OwmService
 import ph.codeia.solshine.shell.ShellContract
 import ph.codeia.solshine.shell.ShellContract.Duration
@@ -62,20 +63,23 @@ class IndexPresenter @Inject constructor(
     override fun fetchForecasts() {
         if (state.isStale && !state.isPending) {
             state.isPending = true
-            repository.fetchWeekForecast(
+            repository.fetchForecasts(
                     BuildConfig.OWM_API_KEY,
                     prefs.getString("location", "Manila"),
-                    prefs.getString("units", "metric")
+                    units = prefs.getString("units", "metric")
             ) {
                 state.isPending = false
-                it?.apply {
-                    val location = "$city, $country"
-                    state.coords = coords
-                    forecastsFetched(forecasts.map {
-                        Weather(location, it.weather.category, it.date,
-                                it.temperature.min, it.temperature.max)
-                    })
-                } ?: msg.tell("got nothing")
+                when (this) {
+                    is Result.Ok -> value.apply {
+                        val location = "$city, $country"
+                        state.coords = coords
+                        forecastsFetched(forecasts.map {
+                            Weather(location, it.weather.category, it.date,
+                                    it.temperature.min, it.temperature.max)
+                        })
+                    }
+                    is Result.Err -> msg.tell(error.toString())
+                }
             }
         }
     }
