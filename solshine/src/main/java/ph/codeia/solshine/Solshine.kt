@@ -12,7 +12,6 @@ import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
-import android.text.format.DateFormat as AndroidDateFormat
 import android.view.LayoutInflater
 import dagger.Component
 import dagger.Module
@@ -28,6 +27,7 @@ import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import javax.inject.Named
 import javax.inject.Singleton
+import android.text.format.DateFormat as AndroidDateFormat
 
 /**
  * This file is a part of the Sunshine-Version-2 project.

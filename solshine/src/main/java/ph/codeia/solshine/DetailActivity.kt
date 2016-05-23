@@ -23,25 +23,22 @@ class DetailActivity : AppCompatActivity() {
     private var label: TextView? = null
     private var shareActionProvider: ShareActionProvider? = null
     private lateinit var shareText: String
-    private val shareIntent: Intent
-        get () = Intent(Intent.ACTION_SEND).apply {
-            type = "text/html"
-            putExtra(Intent.EXTRA_TEXT, Html.fromHtml("$shareText #Sunshine"))
-        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
         Solshine.injector(this).shell(ShellWiring(0)).inject(this)
-        label = (findViewById(R.id.some_label) as TextView).apply {
-            val loc = intent.getStringExtra("location")
-            val date = intent.getStringExtra("date")
-            val status = intent.getStringExtra("status")
-            val minTemp = intent.getDoubleExtra("min", 0.0)
-            val maxTemp = intent.getDoubleExtra("max", 0.0)
-            val s = "$date &mdash; $loc &mdash; $status &mdash; $minTemp / $maxTemp"
-            text = Html.fromHtml(s)
+        intent.let {
+            val loc = it.getStringExtra("location")
+            val date = it.getStringExtra("date")
+            val status = it.getStringExtra("status")
+            val minTemp = it.getDoubleExtra("min", 0.0)
+            val maxTemp = it.getDoubleExtra("max", 0.0)
+            val s = "$date - $loc - $status - $minTemp / $maxTemp"
             shareText = "$s #Solshine"
+            label = (findViewById(R.id.some_label) as TextView).apply {
+                text = Html.fromHtml(s.replace("\\s-\\s".toRegex(), "&mdash;"))
+            }
         }
         supportActionBar?.title = title
     }
@@ -59,9 +56,8 @@ class DetailActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean = when (item?.itemId) {
         R.id.do_share -> true.apply {
-            shareActionProvider?.setShareIntent(shareIntent)
+            shareActionProvider?.setShareIntent(Intent(Intent.ACTION_SEND))
         }
         else -> super.onOptionsItemSelected(item)
     }
-
 }

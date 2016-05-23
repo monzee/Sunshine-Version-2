@@ -41,13 +41,11 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
         index.isStale = true
     }
 
-    private fun showValue(key: String?) {
-        findPreference(key).let {
-            it.summary = preferences.getString(key, when (key) {
-                "location" -> "Manila"
-                "units" -> "metric"
-                else -> ""
-            })
-        }
+    private fun showValue(key: String?) = findPreference(key).let {
+        it.summary = preferences.getString(key, when (key) {
+            "location" -> "Manila"
+            "units" -> "metric"
+            else -> ""
+        })
     }
 }

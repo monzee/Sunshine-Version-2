@@ -8,13 +8,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import ph.codeia.solshine.R
 import javax.inject.Inject
-import javax.inject.Named
 
 /**
  * This file is a part of the Sunshine-Version-2 project.
  */
 class ForecastsAdapter @Inject constructor(
-        @Named("forecasts") private val items: MutableList<IndexContract.WeatherData>,
+        private val items: MutableList<IndexContract.WeatherData>,
         private val user: IndexContract.Interaction,
         private val inflater: LayoutInflater
 ) : RecyclerView.Adapter<ForecastsAdapter.WeatherView>() {

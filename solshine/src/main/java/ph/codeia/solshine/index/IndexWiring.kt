@@ -1,7 +1,6 @@
 package ph.codeia.solshine.index
 
 import android.app.Activity
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import dagger.Module
 import dagger.Provides
@@ -10,9 +9,7 @@ import ph.codeia.solshine.IndexState
 import ph.codeia.solshine.PerFeature
 import ph.codeia.solshine.R
 import ph.codeia.solshine.shell.ShellContract
-import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
-import javax.inject.Named
 
 /**
  * This file is a part of the Sunshine-Version-2 project.
@@ -32,14 +29,10 @@ class IndexWiring(
     class Shared @Inject constructor(internal val presenter: IndexPresenter)
 
     @Provides
-    fun listView(
-            a: Activity, fa: ForecastsAdapter, lm: LinearLayoutManager
-    ): RecyclerView = (a.findViewById(R.id.list_forecasts) as RecyclerView).apply {
-        layoutManager = lm
-        adapter = fa
-    }
+    fun listView(a: Activity): RecyclerView =
+            a.findViewById(R.id.list_forecasts) as RecyclerView
 
-    @[Provides Named("forecasts")]
+    @Provides
     fun data(s: IndexState): MutableList<IndexContract.WeatherData> = s.items
 
     @Provides

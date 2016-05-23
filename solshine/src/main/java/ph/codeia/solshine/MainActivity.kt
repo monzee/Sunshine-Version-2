@@ -31,9 +31,8 @@ class MainActivity : AppCompatActivity(), Injector<Fragment> {
         savedInstanceState ?: go.home()  // should be parameterized
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean = true.apply {
         menuInflater.inflate(R.menu.main, menu)
-        return true
     }
 
     override fun onResumeFragments() {
